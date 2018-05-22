@@ -1,0 +1,9 @@
+<settings>
+  <servers>
+    <server>
+      <id>artifactory.asteriosoft.com</id>
+      <username>${ARTIFACTORY_USERNAME}</username>
+      <password>${ARTIFACTORY_PASSWORD}</password>
+    </server>
+  </servers>
+</settings>
