@@ -1,11 +1,3 @@
-/**
- * VASTTags.java
- * <p>
- * Copyright 2015-2017 RhythmOne. All Rights Reserved.
- * <p>
- * This software is the proprietary information of RhythmOne.
- * Use is subject to license terms.
- */
 package com.asteriosoft.vast;
 
 public enum VASTTag {

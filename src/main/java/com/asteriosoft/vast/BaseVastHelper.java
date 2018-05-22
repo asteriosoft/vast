@@ -1,11 +1,3 @@
-/**
- * BaseVastHelper.java
- * <p>
- * Copyright 2015-2017 RhythmOne. All Rights Reserved.
- * <p>
- * This software is the proprietary information of RhythmOne.
- * Use is subject to license terms.
- */
 package com.asteriosoft.vast;
 
 import org.apache.commons.lang3.StringUtils;
@@ -48,9 +40,7 @@ abstract class BaseVastHelper {
 
             if (!inCDATA) {
                 if (c == '&') {
-                    if ((pos + 4 < max) && xml.charAt(pos + 1) == 'a' && xml.charAt(pos + 2) == 'm' && xml.charAt(pos + 3) == 'p' && xml.charAt(pos + 4) == ';') {
-                        continue;
-                    } else {
+                    if ((pos + 4 >= max) || xml.charAt(pos + 1) != 'a' || xml.charAt(pos + 2) != 'm' || xml.charAt(pos + 3) != 'p' || xml.charAt(pos + 4) != ';') {
                         sb.append("amp;");
                     }
                 }
@@ -98,7 +88,6 @@ abstract class BaseVastHelper {
 
                 if (section(chars, pos, EXTENSIONS_END)) {
                     inExtensions = false;
-                    continue;
                 }
             }
         }
@@ -117,6 +106,7 @@ abstract class BaseVastHelper {
         }
     }
 
+    @SuppressWarnings("unchecked")
     static <T> T get(String key, Map<String, ?> data) {
         return (T) data.get(key);
     }

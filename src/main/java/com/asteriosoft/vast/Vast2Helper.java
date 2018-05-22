@@ -1,11 +1,3 @@
-/**
- * Vast2Helper.java
- * <p>
- * Copyright 2015-2017 RhythmOne. All Rights Reserved.
- * <p>
- * This software is the proprietary information of RhythmOne.
- * Use is subject to license terms.
- */
 package com.asteriosoft.vast;
 
 import com.asteriosoft.vast.v2.ImpressionType;

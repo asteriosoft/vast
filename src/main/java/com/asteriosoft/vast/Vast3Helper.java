@@ -22,8 +22,7 @@ public class Vast3Helper extends BaseVastHelper {
 
     private void injectTracking(VAST vast, Map<String, Object> data) {
 
-        @SuppressWarnings("unchecked")
-        List<String> errorUrls = (List<String>) data.get(VASTTag.UrlErrors.getTagName());
+        List<String> errorUrls = get(VASTTag.UrlErrors.getTagName(), data);
         String errorUrl = CollectionUtils.isNotEmpty(errorUrls) ? errorUrls.get(0) : null;
 
         List<String> imprUrls = get(VASTTag.UrlImpressions.getTagName(), data);
@@ -270,9 +269,5 @@ public class Vast3Helper extends BaseVastHelper {
     @Override
     protected VastVersion getVastVersion() {
         return VastVersion.VAST3;
-    }
-
-    VAST fromString(String s) throws XmlMarshalingException {
-        return unmarshal(s, xmlMarshaling, VAST.class);
     }
 }
