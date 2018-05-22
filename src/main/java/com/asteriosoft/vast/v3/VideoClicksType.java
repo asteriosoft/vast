@@ -1,0 +1,147 @@
+package com.asteriosoft.vast.v3;
+
+import org.eclipse.persistence.oxm.annotations.XmlCDATA;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
+import java.util.ArrayList;
+import java.util.List;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "VideoClicks_type", propOrder = {
+        "clickThrough",
+        "clickTracking",
+        "customClick"
+})
+public class VideoClicksType {
+
+    @XmlElement(name = "ClickThrough")
+    protected VideoClicksType.ClickThrough clickThrough;
+    @XmlElement(name = "ClickTracking")
+    protected List<VideoClicksType.ClickTracking> clickTracking;
+    @XmlElement(name = "CustomClick")
+    protected List<VideoClicksType.CustomClick> customClick;
+
+    public VideoClicksType.ClickThrough getClickThrough() {
+        return clickThrough;
+    }
+
+    public void setClickThrough(VideoClicksType.ClickThrough clickThrough) {
+        this.clickThrough = clickThrough;
+    }
+
+    public List<VideoClicksType.ClickTracking> getClickTracking() {
+        if (clickTracking == null) {
+            clickTracking = new ArrayList<>();
+        }
+        return clickTracking;
+    }
+
+    public void setClickTracking(List<ClickTracking> clickTracking) {
+        this.clickTracking = clickTracking;
+    }
+
+    public List<VideoClicksType.CustomClick> getCustomClick() {
+        if (customClick == null) {
+            customClick = new ArrayList<>();
+        }
+        return customClick;
+    }
+
+    public void setCustomClick(List<CustomClick> customClick) {
+        this.customClick = customClick;
+    }
+
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = "value")
+    public static class ClickThrough {
+
+        @XmlValue
+        @XmlSchemaType(name = "anyURI")
+        @XmlCDATA
+        protected String value;
+        @XmlAttribute
+        protected String id;
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+    }
+
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = "value")
+    public static class ClickTracking {
+
+        @XmlValue
+        @XmlSchemaType(name = "anyURI")
+        @XmlCDATA
+        protected String value;
+        @XmlAttribute
+        protected String id;
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+    }
+
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = "value")
+    public static class CustomClick {
+
+        @XmlValue
+        @XmlSchemaType(name = "anyURI")
+        @XmlCDATA
+        protected String value;
+        @XmlAttribute
+        protected String id;
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+    }
+
+}
