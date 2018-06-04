@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InteractiveCreativeFile_type", propOrder = "value")
-public class InteractiveCreativeFileType {
+public final class InteractiveCreativeFileType {
 
     @XmlValue
     @XmlSchemaType(name = "anyURI")

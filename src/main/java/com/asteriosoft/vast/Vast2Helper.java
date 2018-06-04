@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.Map;
 
-public class Vast2Helper extends BaseVastHelper {
+public final class Vast2Helper extends BaseVastHelper {
 
     private final XmlMarshaling xmlMarshaling = new XmlMarshaling(ObjectFactory.class);
 

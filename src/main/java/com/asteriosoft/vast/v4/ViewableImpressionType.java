@@ -17,7 +17,7 @@ import java.util.List;
         "notViewable",
         "viewUndetermined"
 })
-public class ViewableImpressionType {
+public final class ViewableImpressionType {
 
     @XmlElement(name = "Viewable")
     @XmlSchemaType(name = "anyURI")

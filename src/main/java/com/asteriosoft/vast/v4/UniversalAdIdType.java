@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UniversalAdId_type", propOrder = "value")
-public class UniversalAdIdType {
+public final class UniversalAdIdType {
 
     @XmlValue
     @XmlCDATA

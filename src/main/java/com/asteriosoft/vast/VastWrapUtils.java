@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 
-public class VastWrapUtils {
+public final class VastWrapUtils {
 
     private static final Vast2Helper vast2Helper = new Vast2Helper();
     private static final Vast3Helper vast3Helper = new Vast3Helper();

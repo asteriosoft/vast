@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Survey_type", propOrder = "value")
-public class SurveyType {
+public final class SurveyType {
 
     @XmlValue
     @XmlSchemaType(name = "anyURI")

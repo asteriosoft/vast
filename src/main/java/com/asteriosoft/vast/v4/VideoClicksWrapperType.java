@@ -12,7 +12,7 @@ import java.util.List;
         "clickTracking",
         "customClick"
 })
-public class VideoClicksWrapperType {
+public final class VideoClicksWrapperType {
 
     @XmlElement(name = "ClickTracking")
     protected List<AnyURIType> clickTracking;

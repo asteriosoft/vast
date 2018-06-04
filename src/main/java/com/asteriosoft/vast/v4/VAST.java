@@ -23,7 +23,7 @@ import java.util.List;
         "error"
 })
 @XmlRootElement(name = "VAST")
-public class VAST {
+public final class VAST {
 
     @XmlElement(name = "Ad")
     protected List<VAST.Ad> ad;

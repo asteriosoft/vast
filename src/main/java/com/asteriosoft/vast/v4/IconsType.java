@@ -16,7 +16,7 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Icons_type", propOrder = "icon")
-public class IconsType {
+public final class IconsType {
 
     @XmlElement(name = "Icon", required = true)
     protected List<IconsType.Icon> icon;

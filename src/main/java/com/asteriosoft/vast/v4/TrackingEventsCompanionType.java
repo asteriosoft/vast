@@ -16,7 +16,7 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TrackingEventsCompanion_type", propOrder = "tracking")
-public class TrackingEventsCompanionType {
+public final class TrackingEventsCompanionType {
 
     @XmlElement(name = "Tracking")
     protected List<TrackingEventsCompanionType.Tracking> tracking;

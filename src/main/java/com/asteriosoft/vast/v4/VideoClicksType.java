@@ -13,7 +13,7 @@ import java.util.List;
         "clickTracking",
         "customClick"
 })
-public class VideoClicksType {
+public final class VideoClicksType {
 
     @XmlElement(name = "ClickThrough")
     protected AnyURIType clickThrough;

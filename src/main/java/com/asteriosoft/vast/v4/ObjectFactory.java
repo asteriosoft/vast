@@ -3,7 +3,7 @@ package com.asteriosoft.vast.v4;
 import javax.xml.bind.annotation.XmlRegistry;
 
 @XmlRegistry
-public class ObjectFactory {
+public final class ObjectFactory {
 
     public VAST createVAST() {
         return new VAST();

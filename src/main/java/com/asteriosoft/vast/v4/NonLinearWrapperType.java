@@ -15,7 +15,7 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "NonLinearWrapper_type", propOrder = "nonLinearClickTracking")
-public class NonLinearWrapperType {
+public final class NonLinearWrapperType {
 
     @XmlElement(name = "NonLinearClickTracking")
     @XmlSchemaType(name = "anyURI")

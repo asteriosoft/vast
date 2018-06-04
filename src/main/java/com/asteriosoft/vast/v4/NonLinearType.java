@@ -22,7 +22,7 @@ import java.util.List;
         "nonLinearClickThrough",
         "nonLinearClickTracking"
 })
-public class NonLinearType {
+public final class NonLinearType {
 
     @XmlElement(name = "StaticResource")
     protected StaticResourceType staticResource;

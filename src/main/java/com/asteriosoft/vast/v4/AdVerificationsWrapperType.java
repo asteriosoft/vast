@@ -12,7 +12,7 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AdVerificationsWrapper_type", propOrder = "verification")
-public class AdVerificationsWrapperType {
+public final class AdVerificationsWrapperType {
 
     @XmlElement(name = "Verification")
     protected List<AdVerificationsWrapperType.Verification> verification;

@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AdParameters_type", propOrder = "value")
-public class AdParametersType {
+public final class AdParametersType {
 
     @XmlValue
     @XmlCDATA

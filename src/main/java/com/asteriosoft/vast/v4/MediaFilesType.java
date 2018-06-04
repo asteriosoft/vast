@@ -21,7 +21,7 @@ import java.util.List;
         "mediaFile",
         "interactiveCreativeFile"
 })
-public class MediaFilesType {
+public final class MediaFilesType {
 
     @XmlElement(name = "Mezzanine")
     @XmlSchemaType(name = "anyURI")

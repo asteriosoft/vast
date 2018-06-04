@@ -16,7 +16,7 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TrackingEventsNonLinear_type", propOrder = "tracking")
-public class TrackingEventsNonLinearType {
+public final class TrackingEventsNonLinearType {
 
     @XmlElement(name = "Tracking")
     protected List<TrackingEventsNonLinearType.Tracking> tracking;

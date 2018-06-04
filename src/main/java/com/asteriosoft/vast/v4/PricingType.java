@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Pricing_type", propOrder = "value")
-public class PricingType {
+public final class PricingType {
 
     @XmlValue
     protected BigDecimal value;

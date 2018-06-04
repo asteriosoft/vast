@@ -14,7 +14,7 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AdVerifications_type", propOrder = "verification")
-public class AdVerificationsType {
+public final class AdVerificationsType {
 
     @XmlElement(name = "Verification")
     protected List<AdVerificationsType.Verification> verification;

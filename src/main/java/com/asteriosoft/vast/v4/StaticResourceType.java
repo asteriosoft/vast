@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "StaticResource_type", propOrder = "value")
-public class StaticResourceType {
+public final class StaticResourceType {
 
     @XmlValue
     @XmlSchemaType(name = "anyURI")
