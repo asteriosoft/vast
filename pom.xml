@@ -36,6 +36,17 @@
         </dependency>
     </dependencies>
 
+    <distributionManagement>
+       <snapshotRepository>
+           <id>artifactory.asteriosoft.com</id>
+           <url>http://artifactory.asteriosoft.com/artifactory/libs-snapshot-local</url>
+       </snapshotRepository>
+       <repository>
+           <id>artifactory.asteriosoft.com</id>
+           <url>http://artifactory.asteriosoft.com/artifactory/libs-release-local</url>
+       </repository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
