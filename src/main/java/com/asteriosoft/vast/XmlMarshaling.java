@@ -17,7 +17,7 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-public class XmlMarshaling {
+public final class XmlMarshaling {
 
     private final Map<String, Object> marshallerProperties;
 

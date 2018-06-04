@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Category_type", propOrder = "value")
-public class CategoryType {
+public final class CategoryType {
 
     @XmlValue
     @XmlCDATA

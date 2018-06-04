@@ -18,7 +18,7 @@ import java.util.List;
         "clickTracking",
         "customClick"
 })
-public class VideoClicksType {
+public final class VideoClicksType {
 
     @XmlElement(name = "ClickThrough")
     protected VideoClicksType.ClickThrough clickThrough;
@@ -59,7 +59,7 @@ public class VideoClicksType {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = "value")
-    public static class ClickThrough {
+    public static final class ClickThrough {
 
         @XmlValue
         @XmlSchemaType(name = "anyURI")
@@ -88,7 +88,7 @@ public class VideoClicksType {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = "value")
-    public static class ClickTracking {
+    public static final class ClickTracking {
 
         @XmlValue
         @XmlSchemaType(name = "anyURI")
@@ -117,7 +117,7 @@ public class VideoClicksType {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = "value")
-    public static class CustomClick {
+    public static final class CustomClick {
 
         @XmlValue
         @XmlSchemaType(name = "anyURI")

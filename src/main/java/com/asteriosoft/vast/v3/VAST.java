@@ -24,7 +24,7 @@ import java.util.List;
         "error"
 })
 @XmlRootElement(name = "VAST")
-public class VAST {
+public final class VAST {
 
     @XmlElement(name = "Ad")
     protected List<VAST.Ad> ad;
@@ -67,7 +67,7 @@ public class VAST {
             "inLine",
             "wrapper"
     })
-    public static class Ad {
+    public static final class Ad {
 
         @XmlElement(name = "InLine")
         protected VAST.Ad.InLine inLine;
@@ -123,7 +123,7 @@ public class VAST {
                 "creatives",
                 "extensions"
         })
-        public static class InLine {
+        public static final class InLine {
 
             @XmlElement(name = "AdSystem", required = true)
             protected AdSystemType adSystem;
@@ -236,7 +236,7 @@ public class VAST {
 
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = "creative")
-            public static class Creatives {
+            public static final class Creatives {
 
                 @XmlElement(name = "Creative", required = true)
                 protected List<VAST.Ad.InLine.Creatives.Creative> creative;
@@ -258,7 +258,7 @@ public class VAST {
                         "companionAds",
                         "nonLinearAds"
                 })
-                public static class Creative {
+                public static final class Creative {
 
                     @XmlElement(name = "Linear")
                     protected VAST.Ad.InLine.Creatives.Creative.Linear linear;
@@ -323,7 +323,7 @@ public class VAST {
 
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = "companion")
-                    public static class CompanionAds {
+                    public static final class CompanionAds {
 
                         @XmlElement(name = "Companion")
                         protected List<CompanionType> companion;
@@ -362,7 +362,7 @@ public class VAST {
                             "videoClicks",
                             "mediaFiles"
                     })
-                    public static class Linear {
+                    public static final class Linear {
 
                         @XmlElement(name = "Icons")
                         protected VAST.Ad.InLine.Creatives.Creative.Linear.Icons icons;
@@ -448,7 +448,7 @@ public class VAST {
 
                         @XmlAccessorType(XmlAccessType.FIELD)
                         @XmlType(name = "", propOrder = "icon")
-                        public static class Icons {
+                        public static final class Icons {
 
                             @XmlElement(name = "Icon", required = true)
                             protected List<IconType> icon;
@@ -467,7 +467,7 @@ public class VAST {
 
                         @XmlAccessorType(XmlAccessType.FIELD)
                         @XmlType(name = "", propOrder = "mediaFile")
-                        public static class MediaFiles {
+                        public static final class MediaFiles {
 
                             @XmlElement(name = "MediaFile", required = true)
                             protected List<VAST.Ad.InLine.Creatives.Creative.Linear.MediaFiles.MediaFile> mediaFile;
@@ -485,7 +485,7 @@ public class VAST {
 
                             @XmlAccessorType(XmlAccessType.FIELD)
                             @XmlType(name = "", propOrder = "value")
-                            public static class MediaFile {
+                            public static final class MediaFile {
 
                                 @XmlValue
                                 @XmlSchemaType(name = "anyURI")
@@ -632,7 +632,7 @@ public class VAST {
                             "trackingEvents",
                             "nonLinear"
                     })
-                    public static class NonLinearAds {
+                    public static final class NonLinearAds {
 
                         @XmlElement(name = "TrackingEvents")
                         protected TrackingEventsType trackingEvents;
@@ -666,7 +666,7 @@ public class VAST {
 
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = "value")
-            public static class Pricing {
+            public static final class Pricing {
 
                 @XmlValue
                 protected BigDecimal value;
@@ -713,7 +713,7 @@ public class VAST {
                 "creatives",
                 "extensions"
         })
-        public static class Wrapper {
+        public static final class Wrapper {
 
             @XmlElement(name = "AdSystem", required = true)
             protected AdSystemType adSystem;
@@ -787,7 +787,7 @@ public class VAST {
 
             @XmlAccessorType(XmlAccessType.FIELD)
             @XmlType(name = "", propOrder = "creative")
-            public static class Creatives {
+            public static final class Creatives {
 
                 @XmlElement(name = "Creative")
                 protected List<VAST.Ad.Wrapper.Creatives.Creative> creative;
@@ -809,7 +809,7 @@ public class VAST {
                         "companionAds",
                         "nonLinearAds"
                 })
-                public static class Creative {
+                public static final class Creative {
 
                     @XmlElement(name = "Linear")
                     protected VAST.Ad.Wrapper.Creatives.Creative.Linear linear;
@@ -874,7 +874,7 @@ public class VAST {
 
                     @XmlAccessorType(XmlAccessType.FIELD)
                     @XmlType(name = "", propOrder = "companion")
-                    public static class CompanionAds {
+                    public static final class CompanionAds {
 
                         @XmlElement(name = "Companion")
                         protected List<CompanionWrapperType> companion;
@@ -898,7 +898,7 @@ public class VAST {
                             "trackingEvents",
                             "videoClicks"
                     })
-                    public static class Linear {
+                    public static final class Linear {
 
                         @XmlElement(name = "CreativeExtensions")
                         protected CreativeExtensionsType creativeExtensions;
@@ -943,7 +943,7 @@ public class VAST {
 
                         @XmlAccessorType(XmlAccessType.FIELD)
                         @XmlType(name = "", propOrder = "icon")
-                        public static class Icons {
+                        public static final class Icons {
 
                             @XmlElement(name = "Icon", required = true)
                             protected List<IconType> icon;
@@ -965,7 +965,7 @@ public class VAST {
                                 "clickTracking",
                                 "customClick"
                         })
-                        public static class VideoClicks {
+                        public static final class VideoClicks {
 
                             @XmlElement(name = "ClickTracking")
                             protected List<VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking> clickTracking;
@@ -996,7 +996,7 @@ public class VAST {
 
                             @XmlAccessorType(XmlAccessType.FIELD)
                             @XmlType(name = "", propOrder = "value")
-                            public static class ClickTracking {
+                            public static final class ClickTracking {
 
                                 @XmlValue
                                 @XmlSchemaType(name = "anyURI")
@@ -1025,7 +1025,7 @@ public class VAST {
 
                             @XmlAccessorType(XmlAccessType.FIELD)
                             @XmlType(name = "", propOrder = "value")
-                            public static class CustomClick {
+                            public static final class CustomClick {
 
                                 @XmlValue
                                 @XmlSchemaType(name = "anyURI")
@@ -1061,7 +1061,7 @@ public class VAST {
                             "trackingEvents",
                             "nonLinear"
                     })
-                    public static class NonLinearAds {
+                    public static final class NonLinearAds {
 
                         @XmlElement(name = "TrackingEvents")
                         protected TrackingEventsType trackingEvents;

@@ -17,7 +17,7 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TrackingEvents_type", propOrder = "tracking")
-public class TrackingEventsType {
+public final class TrackingEventsType {
 
     @XmlElement(name = "Tracking")
     protected List<TrackingEventsType.Tracking> tracking;
@@ -35,7 +35,7 @@ public class TrackingEventsType {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = "value")
-    public static class Tracking {
+    public static final class Tracking {
 
         @XmlValue
         @XmlSchemaType(name = "anyURI")

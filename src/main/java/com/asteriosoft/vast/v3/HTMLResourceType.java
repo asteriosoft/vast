@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "HTMLResource_type", propOrder = "value")
-public class HTMLResourceType {
+public final class HTMLResourceType {
 
     @XmlValue
     @XmlCDATA

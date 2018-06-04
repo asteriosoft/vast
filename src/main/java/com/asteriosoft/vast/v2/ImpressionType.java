@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlValue;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Impression_type", propOrder = "value")
-public class ImpressionType {
+public final class ImpressionType {
 
     @XmlValue
     @XmlSchemaType(name = "anyURI")

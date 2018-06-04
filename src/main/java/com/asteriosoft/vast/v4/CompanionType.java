@@ -24,7 +24,7 @@ import java.util.List;
         "companionClickTracking",
         "trackingEvents"
 })
-public class CompanionType {
+public final class CompanionType {
 
     @XmlElement(name = "StaticResource")
     protected StaticResourceType staticResource;

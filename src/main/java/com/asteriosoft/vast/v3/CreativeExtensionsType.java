@@ -14,7 +14,7 @@ import java.util.Map;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CreativeExtensions_type", propOrder = "creativeExtension")
-public class CreativeExtensionsType {
+public final class CreativeExtensionsType {
 
     @XmlElement(name = "CreativeExtension")
     protected List<CreativeExtensionsType.CreativeExtension> creativeExtension;
@@ -32,7 +32,7 @@ public class CreativeExtensionsType {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = "any")
-    public static class CreativeExtension {
+    public static final class CreativeExtension {
 
         @XmlAnyElement(lax = true)
         protected List<Object> any;

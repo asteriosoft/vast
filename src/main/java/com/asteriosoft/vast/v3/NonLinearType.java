@@ -24,7 +24,7 @@ import java.util.List;
         "nonLinearClickThrough",
         "adParameters"
 })
-public class NonLinearType {
+public final class NonLinearType {
 
     @XmlElement(name = "StaticResource")
     protected NonLinearType.StaticResource staticResource;
@@ -199,7 +199,7 @@ public class NonLinearType {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = "value")
-    public static class StaticResource {
+    public static final class StaticResource {
 
         @XmlValue
         @XmlSchemaType(name = "anyURI")

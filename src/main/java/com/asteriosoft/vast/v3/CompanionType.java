@@ -25,7 +25,7 @@ import java.util.List;
         "altText",
         "adParameters"
 })
-public class CompanionType {
+public final class CompanionType {
 
     @XmlElement(name = "StaticResource")
     protected CompanionType.StaticResource staticResource;
@@ -228,7 +228,7 @@ public class CompanionType {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = "value")
-    public static class StaticResource {
+    public static final class StaticResource {
 
         @XmlValue
         @XmlSchemaType(name = "anyURI")

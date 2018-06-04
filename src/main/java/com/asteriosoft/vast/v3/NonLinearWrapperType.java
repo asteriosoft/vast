@@ -19,7 +19,7 @@ import java.util.List;
         "creativeExtensions",
         "nonLinearClickTracking"
 })
-public class NonLinearWrapperType {
+public final class NonLinearWrapperType {
 
     @XmlElement(name = "CreativeExtensions")
     protected CreativeExtensionsType creativeExtensions;

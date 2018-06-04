@@ -11,7 +11,7 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Extensions_type", propOrder = "extension")
-public class ExtensionsType {
+public final class ExtensionsType {
 
     @XmlElement(name = "Extension")
     protected List<ExtensionsType.Extension> extension;
@@ -29,7 +29,7 @@ public class ExtensionsType {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = "any")
-    public static class Extension {
+    public static final class Extension {
 
         @XmlAnyElement(lax = true)
         protected List<Object> any;

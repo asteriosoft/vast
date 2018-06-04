@@ -23,7 +23,7 @@ import java.util.List;
         "iconClicks",
         "iconViewTracking"
 })
-public class IconType {
+public final class IconType {
 
     @XmlElement(name = "StaticResource")
     protected IconType.StaticResource staticResource;
@@ -170,7 +170,7 @@ public class IconType {
             "iconClickTracking",
             "iconClickThrough"
     })
-    public static class IconClicks {
+    public static final class IconClicks {
 
         @XmlElement(name = "IconClickTracking")
         @XmlSchemaType(name = "anyURI")
@@ -204,7 +204,7 @@ public class IconType {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(name = "", propOrder = "value")
-    public static class StaticResource {
+    public static final class StaticResource {
 
         @XmlValue
         @XmlSchemaType(name = "anyURI")
