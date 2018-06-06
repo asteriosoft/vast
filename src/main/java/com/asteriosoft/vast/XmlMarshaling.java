@@ -9,8 +9,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -100,8 +100,7 @@ public final class XmlMarshaling {
 
     public <T> T unmarshal(String input, Class<T> clazz) throws XmlMarshalingException {
         try {
-            final XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(new StringReader(input));
-            return getUnmarshaller().unmarshal(xmlStreamReader, clazz).getValue();
+            return getUnmarshaller().unmarshal(new StreamSource(new StringReader(input)), clazz).getValue();
         } catch (Exception e) {
             throw new XmlMarshalingException(e);
         }
