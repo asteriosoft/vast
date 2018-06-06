@@ -20,8 +20,8 @@ public enum VastVersion {
     private static final Map<Integer, VastVersion> BY_OPEN_RTB_PROTOCOL;
 
     static {
-        Map<Integer, VastVersion> byVersionMap = new HashMap<>();
-        Map<Integer, VastVersion> byOpenRtbProtocolMap = new HashMap<>();
+        Map<Integer, VastVersion> byVersionMap = new HashMap<>(values().length);
+        Map<Integer, VastVersion> byOpenRtbProtocolMap = new HashMap<>(values().length);
         for (VastVersion vastVersion : values()) {
             byVersionMap.put(vastVersion.version, vastVersion);
             byOpenRtbProtocolMap.put(vastVersion.openRtbProtocol, vastVersion);
