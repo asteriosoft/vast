@@ -14,6 +14,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +51,7 @@ public final class Vast4Helper extends BaseVastHelper {
                             i++;
                         }
                     } else {
-                        errors = List.of(errorUrl);
+                        errors = Collections.singletonList(errorUrl);
                     }
                     ad.getWrapper().setError(errors);
                 }
@@ -168,7 +169,7 @@ public final class Vast4Helper extends BaseVastHelper {
                             i++;
                         }
                     } else {
-                        errors = List.of(errorUrl);
+                        errors = Collections.singletonList(errorUrl);
                     }
                     ad.getInLine().setError(errors);
                 }
