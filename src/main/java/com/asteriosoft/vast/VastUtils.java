@@ -46,7 +46,7 @@ public class VastUtils {
         return false;
     }
 
-    static VastVersion parseVastVersion(String vast) {
+    private static VastVersion parseVastVersion(String vast) {
         if (vast.contains("version=\"2.0\">")) {
             return VastVersion.VAST2;
         } else if (vast.contains("version=\"3.0\">")) {
