@@ -295,6 +295,16 @@ public final class Vast4Helper extends BaseVastHelper {
     }
 
     @Override
+    protected XmlMarshaling getXmlMarshaling() {
+        return xmlMarshaling;
+    }
+
+    @Override
+    protected Class<?> getVastClass() {
+        return VAST.class;
+    }
+
+    @Override
     protected VastVersion getVastVersion() {
         return VastVersion.VAST4;
     }

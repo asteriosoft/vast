@@ -131,4 +131,12 @@ abstract class BaseVastHelper {
     protected abstract VastVersion getVastVersion();
 
     protected abstract String injectTracking(String vastStr, Map<String, Object> vastdata) throws XmlMarshalingException;
+
+    protected abstract XmlMarshaling getXmlMarshaling();
+
+    Object unmarshal(String vast) throws XmlMarshalingException {
+        return unmarshal(vast, getXmlMarshaling(), getVastClass());
+    }
+
+    protected abstract Class<?> getVastClass();
 }
