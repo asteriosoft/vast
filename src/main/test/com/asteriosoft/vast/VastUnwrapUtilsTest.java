@@ -6,8 +6,8 @@ public class VastUnwrapUtilsTest {
 
     @Test
     public void test() throws VastUnwrapException {
-        String vast4 = "<VAST version=\"4.0\">\n" +
-                "  <Ad id=\"20001\" sequence=\"1\" conditionalAd=\"false\">\n" +
+        String vast4 = "<VAST version=\"4.0\" xmlns=\"http://www.iab.com/VAST\">\n" +
+                "  <Ad id=\"20004\" sequence=\"1\" conditionalAd=\"false\">\n" +
                 "    <InLine>\n" +
                 "      <AdSystem version=\"4.0\">iabtechlab</AdSystem>\n" +
                 "      <Error>http://example.com/error</Error>\n" +
@@ -22,27 +22,27 @@ public class VastUnwrapUtilsTest {
                 "      <Pricing model=\"cpm\" currency=\"USD\">\n" +
                 "        <![CDATA[ 25.00 ]]>\n" +
                 "      </Pricing>\n" +
-                "      <AdTitle>iabtechlab video ad</AdTitle>\n" +
-                "      <AdVerifications>\n" +
-                "        <Verification>\n" +
-                "          <JavaScriptResource>\n" +
-                "            <![CDATA[https://verificationcompany1.com/verification_script1.js]]>\n" +
-                "          </JavaScriptResource>\n" +
-                "        </Verification>\n" +
-                "        <Verification>\n" +
-                "          <JavaScriptResource>\n" +
-                "            <![CDATA[https://verificationcompany.com/untrusted.js]]>\n" +
-                "          </JavaScriptResource>\n" +
-                "        </Verification>\n" +
-                "      </AdVerifications>\n" +
-                "      <Advertiser>IAB Sample Company</Advertiser>\n" +
-                "      <Category authority=\"foo\" />\n" +
+                "      <AdTitle>\n" +
+                "        <![CDATA[VAST 4.0 Pilot - Scenario 5]]>\n" +
+                "      </AdTitle>\n" +
                 "      <Creatives>\n" +
                 "        <Creative id=\"5480\" sequence=\"1\" adId=\"2447226\">\n" +
+                "          <CompanionAds>\n" +
+                "            <Companion id=\"1232\" width=\"100\" height=\"150\" assetWidth=\"250\" assetHeight=\"200\" expandedWidth=\"350\" expandedHeight=\"250\" adSlotID=\"3214\" pxratio=\"1400\">\n" +
+                "              <StaticResource creativeType=\"image/png\">\n" +
+                "                <![CDATA[https://www.iab.com/wp-content/uploads/2014/09/iab-tech-lab-6-644x290.png]]>\n" +
+                "              </StaticResource>\n" +
+                "              <CompanionClickThrough>\n" +
+                "                <![CDATA[https://iabtechlab.com]]>\n" +
+                "              </CompanionClickThrough>\n" +
+                "            </Companion>\n" +
+                "          </CompanionAds>\n" +
                 "          <UniversalAdId idRegistry=\"Ad-ID\" idValue=\"8465\">8465</UniversalAdId>\n" +
+                "        </Creative>\n" +
+                "        <Creative id=\"5480\" sequence=\"1\" adId=\"2447226\">\n" +
                 "          <Linear>\n" +
                 "            <TrackingEvents>\n" +
-                "              <Tracking event=\"start\" offset=\"12:22:11\">http://example.com/tracking/start</Tracking>\n" +
+                "              <Tracking event=\"start\" offset=\"09:15:23\">http://example.com/tracking/start</Tracking>\n" +
                 "              <Tracking event=\"firstQuartile\">http://example.com/tracking/firstQuartile</Tracking>\n" +
                 "              <Tracking event=\"midpoint\">http://example.com/tracking/midpoint</Tracking>\n" +
                 "              <Tracking event=\"thirdQuartile\">http://example.com/tracking/thirdQuartile</Tracking>\n" +
@@ -66,8 +66,12 @@ public class VastUnwrapUtilsTest {
                 "              </ClickThrough>\n" +
                 "            </VideoClicks>\n" +
                 "          </Linear>\n" +
+                "          <UniversalAdId idRegistry=\"Ad-ID\" idValue=\"8465\">8465</UniversalAdId>\n" +
                 "        </Creative>\n" +
                 "      </Creatives>\n" +
+                "      <Description>\n" +
+                "        <![CDATA[This is sample companion ad tag with Linear ad tag. This tag while showing video ad on the player, will show a companion ad beside the player where it can be fitted. At most 3 companion ads can be placed. Modify accordingly to see your own content. ]]>\n" +
+                "      </Description>\n" +
                 "    </InLine>\n" +
                 "  </Ad>\n" +
                 "</VAST>";

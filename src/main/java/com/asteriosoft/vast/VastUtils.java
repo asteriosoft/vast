@@ -9,7 +9,7 @@ public class VastUtils {
     private static final Vast4Helper vast4Helper = new Vast4Helper();
 
     static String cutVast(String adCode) {
-        adCode = adCode.trim();
+        adCode = removeIabXmlns(adCode).trim();
 
         if (adCode.endsWith("</VAST>")) {
             return adCode;
@@ -20,6 +20,20 @@ public class VastUtils {
             adCode = adCode.substring(0, z + "</VAST>".length());
         }
         return adCode;
+    }
+
+    private static String removeIabXmlns(String vast) {
+        String strToRemove = "xmlns=\"http://www.iab.com/VAST\"";
+        int index = vast.indexOf(strToRemove);
+        if (index > -1) {
+            String firstPart = null;
+            if (index > 0) {
+                firstPart = vast.substring(0, index - 1);
+            }
+            String secondPart = vast.substring(index + strToRemove.length());
+            vast = firstPart == null ? secondPart : firstPart + secondPart;
+        }
+        return vast;
     }
 
     public static boolean isVast(String adCode) {
