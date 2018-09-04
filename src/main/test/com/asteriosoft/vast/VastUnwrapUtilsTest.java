@@ -1,108 +1,187 @@
 package com.asteriosoft.vast;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
+
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class VastUnwrapUtilsTest {
 
-    @Test
-    public void test() throws VastUnwrapException {
-        String vast4 = "<VAST version=\"4.0\" xmlns=\"http://www.iab.com/VAST\">\n" +
-                "  <Ad id=\"20004\" sequence=\"1\" conditionalAd=\"false\">\n" +
-                "    <InLine>\n" +
-                "      <AdSystem version=\"4.0\">iabtechlab</AdSystem>\n" +
-                "      <Error>http://example.com/error</Error>\n" +
-                "      <Extensions>\n" +
-                "        <Extension type=\"iab-Count\">\n" +
-                "          <total_available>\n" +
-                "            <![CDATA[ 2 ]]>\n" +
-                "          </total_available>\n" +
-                "        </Extension>\n" +
-                "      </Extensions>\n" +
-                "      <Impression id=\"Impression-ID\">http://example.com/track/impression</Impression>\n" +
-                "      <Pricing model=\"cpm\" currency=\"USD\">\n" +
-                "        <![CDATA[ 25.00 ]]>\n" +
-                "      </Pricing>\n" +
-                "      <AdTitle>\n" +
-                "        <![CDATA[VAST 4.0 Pilot - Scenario 5]]>\n" +
-                "      </AdTitle>\n" +
-                "      <Creatives>\n" +
-                "        <Creative id=\"5480\" sequence=\"1\" adId=\"2447226\">\n" +
-                "          <CompanionAds>\n" +
-                "            <Companion id=\"1232\" width=\"100\" height=\"150\" assetWidth=\"250\" assetHeight=\"200\" expandedWidth=\"350\" expandedHeight=\"250\" adSlotID=\"3214\" pxratio=\"1400\">\n" +
-                "              <StaticResource creativeType=\"image/png\">\n" +
-                "                <![CDATA[https://www.iab.com/wp-content/uploads/2014/09/iab-tech-lab-6-644x290.png]]>\n" +
-                "              </StaticResource>\n" +
-                "              <CompanionClickThrough>\n" +
-                "                <![CDATA[https://iabtechlab.com]]>\n" +
-                "              </CompanionClickThrough>\n" +
-                "            </Companion>\n" +
-                "          </CompanionAds>\n" +
-                "          <UniversalAdId idRegistry=\"Ad-ID\" idValue=\"8465\">8465</UniversalAdId>\n" +
-                "        </Creative>\n" +
-                "        <Creative id=\"5480\" sequence=\"1\" adId=\"2447226\">\n" +
-                "          <Linear>\n" +
-                "            <TrackingEvents>\n" +
-                "              <Tracking event=\"start\" offset=\"09:15:23\">http://example.com/tracking/start</Tracking>\n" +
-                "              <Tracking event=\"firstQuartile\">http://example.com/tracking/firstQuartile</Tracking>\n" +
-                "              <Tracking event=\"midpoint\">http://example.com/tracking/midpoint</Tracking>\n" +
-                "              <Tracking event=\"thirdQuartile\">http://example.com/tracking/thirdQuartile</Tracking>\n" +
-                "              <Tracking event=\"complete\">http://example.com/tracking/complete</Tracking>\n" +
-                "            </TrackingEvents>\n" +
-                "            <Duration>00:00:16</Duration>\n" +
-                "            <MediaFiles>\n" +
-                "              <MediaFile id=\"5241\" delivery=\"progressive\" type=\"video/mp4\" bitrate=\"2000\" width=\"1280\" height=\"720\" minBitrate=\"1500\" maxBitrate=\"2500\" scalable=\"1\" maintainAspectRatio=\"1\" codec=\"0\">\n" +
-                "                <![CDATA[https://iabtechlab.com/wp-content/uploads/2016/07/VAST-4.0-Short-Intro.mp4]]>\n" +
-                "              </MediaFile>\n" +
-                "              <MediaFile id=\"5244\" delivery=\"progressive\" type=\"video/mp4\" bitrate=\"1000\" width=\"854\" height=\"480\" minBitrate=\"700\" maxBitrate=\"1500\" scalable=\"1\" maintainAspectRatio=\"1\" codec=\"0\">\n" +
-                "                <![CDATA[https://iabtechlab.com/wp-content/uploads/2017/12/VAST-4.0-Short-Intro-mid-resolution.mp4]]>\n" +
-                "              </MediaFile>\n" +
-                "              <MediaFile id=\"5246\" delivery=\"progressive\" type=\"video/mp4\" bitrate=\"600\" width=\"640\" height=\"360\" minBitrate=\"500\" maxBitrate=\"700\" scalable=\"1\" maintainAspectRatio=\"1\" codec=\"0\">\n" +
-                "                <![CDATA[https://iabtechlab.com/wp-content/uploads/2017/12/VAST-4.0-Short-Intro-low-resolution.mp4]]>\n" +
-                "              </MediaFile>\n" +
-                "            </MediaFiles>\n" +
-                "            <VideoClicks>\n" +
-                "              <ClickThrough id=\"blog\">\n" +
-                "                <![CDATA[https://iabtechlab.com]]>\n" +
-                "              </ClickThrough>\n" +
-                "            </VideoClicks>\n" +
-                "          </Linear>\n" +
-                "          <UniversalAdId idRegistry=\"Ad-ID\" idValue=\"8465\">8465</UniversalAdId>\n" +
-                "        </Creative>\n" +
-                "      </Creatives>\n" +
-                "      <Description>\n" +
-                "        <![CDATA[This is sample companion ad tag with Linear ad tag. This tag while showing video ad on the player, will show a companion ad beside the player where it can be fitted. At most 3 companion ads can be placed. Modify accordingly to see your own content. ]]>\n" +
-                "      </Description>\n" +
-                "    </InLine>\n" +
-                "  </Ad>\n" +
-                "</VAST>";
+    private static final String VAST2_WRAPPER_WITH_COMPANIONS = "<VAST version=\"2.0\"><Ad id=\"602867\"><Wrapper><AdSystem>Acudeo Compatible</AdSystem><VASTAdTagURI>http://demo.tremormedia.com/proddev/vast/vast_inline_nonlinear3.xml</VASTAdTagURI><Impression>http://myTrackingURL/wrapper/impression</Impression><Creatives><Creative AdID=\"602867\"><Linear><TrackingEvents>\n" +
+            "\t\t\t\t</TrackingEvents></Linear></Creative><Creative AdID=\"602867-NonLinearTracking\"><NonLinearAds><TrackingEvents>\n" +
+            "\t\t\t\t</TrackingEvents></NonLinearAds></Creative><Creative AdID=\"602867-Companion\"><CompanionAds><Companion width=\"300\" height=\"250\"><StaticResource creativeType=\"image/jpeg\">http://demo.tremormedia.com/proddev/vast/300x250_banner1.jpg</StaticResource><TrackingEvents><Tracking event=\"creativeView\">http://myTrackingURL/wrapper/firstCompanionCreativeView</Tracking></TrackingEvents><CompanionClickThrough>http://www.tremormedia.com</CompanionClickThrough></Companion><Companion width=\"728\" height=\"90\"><StaticResource creativeType=\"image/jpeg\">http://demo.tremormedia.com/proddev/vast/728x90_banner1.jpg</StaticResource><CompanionClickThrough>http://www.tremormedia.com</CompanionClickThrough></Companion></CompanionAds></Creative></Creatives></Wrapper></Ad></VAST>";
 
-        String vast2 = "<VAST version=\"2.0\"><Ad id=\"602833\"><Wrapper><AdSystem>Acudeo Compatible</AdSystem><VASTAdTagURI>http://demo.tremormedia.com/proddev/vast/vast_inline_linear.xml</VASTAdTagURI><Error>http://myErrorURL/wrapper/error</Error><Impression>http://myTrackingURL/wrapper/impression</Impression><Creatives><Creative AdID=\"602833\"><Linear><TrackingEvents><Tracking event=\"creativeView\">http://myTrackingURL/wrapper/creativeView</Tracking><Tracking event=\"start\">http://myTrackingURL/wrapper/start</Tracking><Tracking event=\"midpoint\">http://myTrackingURL/wrapper/midpoint</Tracking><Tracking event=\"firstQuartile\">http://myTrackingURL/wrapper/firstQuartile</Tracking><Tracking event=\"thirdQuartile\">http://myTrackingURL/wrapper/thirdQuartile</Tracking><Tracking event=\"complete\">http://myTrackingURL/wrapper/complete</Tracking><Tracking event=\"mute\">http://myTrackingURL/wrapper/mute</Tracking><Tracking event=\"unmute\">http://myTrackingURL/wrapper/unmute</Tracking><Tracking event=\"pause\">http://myTrackingURL/wrapper/pause</Tracking><Tracking event=\"resume\">http://myTrackingURL/wrapper/resume</Tracking><Tracking event=\"fullscreen\">http://myTrackingURL/wrapper/fullscreen</Tracking></TrackingEvents></Linear></Creative><Creative><Linear><VideoClicks><ClickTracking>http://myTrackingURL/wrapper/click</ClickTracking></VideoClicks></Linear></Creative><Creative AdID=\"602833-NonLinearTracking\"><NonLinearAds><TrackingEvents></TrackingEvents></NonLinearAds></Creative></Creatives></Wrapper></Ad></VAST>";
-        String vast3 = "<VAST version=\"3.0\">\n" +
-                "    <Ad id=\"20011\">\n" +
-                "        <Wrapper>\n" +
-                "            <AdSystem version=\"4.0\">iabtechlab</AdSystem>\n" +
-                "            <VASTAdTagURI><![CDATA[https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%203.0%20Samples/Inline_Companion_Tag-test.xml]]></VASTAdTagURI>\n" +
-                "\n" +
-                "            <Error>http://example.com/error</Error>\n" +
-                "\n" +
-                "            <Impression>http://example.com/track/impression</Impression>\n" +
-                "            <Creatives>\n" +
-                "                <Creative id=\"5480\" sequence=\"1\">\n" +
-                "                    <CompanionAds>\n" +
-                "                        <Companion id=\"1232\" width=\"100\" height=\"150\" assetWidth=\"250\" assetHeight=\"200\" expandedWidth=\"350\" expandedHeight=\"250\">\n" +
-                "                            <StaticResource creativeType=\"image/png\">\n" +
-                "                                    <![CDATA[https://www.iab.com/wp-content/uploads/2014/09/iab-tech-lab-6-644x290.png]]>\n" +
-                "                            </StaticResource>\n" +
-                "                            <CompanionClickThrough>\n" +
-                "                                <![CDATA[https://iabtechlab.com]]>\n" +
-                "                            </CompanionClickThrough>\n" +
-                "                        </Companion>\n" +
-                "                    </CompanionAds>\n" +
-                "                </Creative>\n" +
-                "            </Creatives>\n" +
-                "        </Wrapper>\n" +
-                "    </Ad>\n" +
-                "</VAST>";
-        Object vast = VastUnwrapUtils.parseVast(vast4);
+    private static final String VAST2_WRAPPER_WITHOUT_COMPANIONS = "<VAST version=\"2.0\"><Ad id=\"602867\"><Wrapper><AdSystem>Acudeo Compatible</AdSystem><VASTAdTagURI>http://demo.tremormedia.com/proddev/vast/vast_inline_nonlinear3.xml</VASTAdTagURI><Impression>http://myTrackingURL/wrapper/impression</Impression></Wrapper></Ad></VAST>";
+
+    private static final String VAST3_WRAPPER_WITH_COMPANIONS = "<VAST version=\"3.0\">\n" +
+            "    <Ad id=\"20011\">\n" +
+            "        <Wrapper>\n" +
+            "            <AdSystem version=\"4.0\">iabtechlab</AdSystem>\n" +
+            "            <VASTAdTagURI><![CDATA[https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%203.0%20Samples/Inline_Companion_Tag-test.xml]]></VASTAdTagURI>\n" +
+            "\n" +
+            "            <Error>http://example.com/error</Error>\n" +
+            "\n" +
+            "            <Impression>http://example.com/track/impression</Impression>\n" +
+            "            <Creatives>\n" +
+            "                <Creative id=\"5480\" sequence=\"1\">\n" +
+            "                    <CompanionAds>\n" +
+            "                        <Companion id=\"1232\" width=\"100\" height=\"150\" assetWidth=\"250\" assetHeight=\"200\" expandedWidth=\"350\" expandedHeight=\"250\">\n" +
+            "                            <StaticResource creativeType=\"image/png\">\n" +
+            "                                    <![CDATA[https://www.iab.com/wp-content/uploads/2014/09/iab-tech-lab-6-644x290.png]]>\n" +
+            "                            </StaticResource>\n" +
+            "                            <CompanionClickThrough>\n" +
+            "                                <![CDATA[https://iabtechlab.com]]>\n" +
+            "                            </CompanionClickThrough>\n" +
+            "                        </Companion>\n" +
+            "                    </CompanionAds>\n" +
+            "                </Creative>\n" +
+            "            </Creatives>\n" +
+            "        </Wrapper>\n" +
+            "    </Ad>\n" +
+            "</VAST>";
+
+    private static final String VAST3_WRAPPER_WITHOUT_COMPANIONS = "<VAST version=\"3.0\">\n" +
+            "    <Ad id=\"20011\">\n" +
+            "        <Wrapper>\n" +
+            "            <AdSystem version=\"4.0\">iabtechlab</AdSystem>\n" +
+            "            <VASTAdTagURI><![CDATA[https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%203.0%20Samples/Inline_Companion_Tag-test.xml]]></VASTAdTagURI>\n" +
+            "\n" +
+            "            <Error>http://example.com/error</Error>\n" +
+            "\n" +
+            "            <Impression>http://example.com/track/impression</Impression>\n" +
+            "            <Creatives>\n" +
+            "            </Creatives>\n" +
+            "        </Wrapper>\n" +
+            "    </Ad>\n" +
+            "</VAST>";
+
+    private static final String VAST4_WRAPPER_WITH_COMPANIONS = "<VAST version=\"4.0\" xmlns=\"http://www.iab.com/VAST\">\n" +
+            "  <Ad id=\"20011\" sequence=\"1\" conditionalAd=\"false\">\n" +
+            "    <Wrapper followAdditionalWrappers=\"0\" allowMultipleAds=\"1\" fallbackOnNoAd=\"0\">\n" +
+            "      <AdSystem version=\"4.0\">iabtechlab</AdSystem>\n" +
+            "      <Error>http://example.com/error</Error>\n" +
+            "      <Impression id=\"Impression-ID\">http://example.com/track/impression</Impression>\n" +
+            "      <Creatives>\n" +
+            "        <Creative id=\"5480\" sequence=\"1\" adId=\"2447226\">\n" +
+            "          <CompanionAds>\n" +
+            "            <Companion id=\"1232\" width=\"100\" height=\"150\" assetWidth=\"250\" assetHeight=\"200\" expandedWidth=\"350\" expandedHeight=\"250\" apiFramework=\"VPAID\" adSlotID=\"3214\" pxratio=\"1400\">\n" +
+            "              <StaticResource creativeType=\"image/png\">\n" +
+            "                <![CDATA[https://www.iab.com/wp-content/uploads/2014/09/iab-tech-lab-6-644x290.png]]>\n" +
+            "              </StaticResource>\n" +
+            "              <CompanionClickThrough>\n" +
+            "                <![CDATA[https://iabtechlab.com]]>\n" +
+            "              </CompanionClickThrough>\n" +
+            "            </Companion>\n" +
+            "          </CompanionAds>\n" +
+            "        </Creative>\n" +
+            "      </Creatives>\n" +
+            "      <VASTAdTagURI>\n" +
+            "        <![CDATA[https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%204.0%20Samples/Inline_Companion_Tag-test.xml]]>\n" +
+            "      </VASTAdTagURI>\n" +
+            "    </Wrapper>\n" +
+            "  </Ad>\n" +
+            "</VAST>";
+
+    private static final String VAST4_WRAPPER_WITHOUT_COMPANIONS = "<VAST version=\"4.0\" xmlns=\"http://www.iab.com/VAST\">\n" +
+            "  <Ad id=\"20011\" sequence=\"1\" conditionalAd=\"false\">\n" +
+            "    <Wrapper followAdditionalWrappers=\"0\" allowMultipleAds=\"1\" fallbackOnNoAd=\"0\">\n" +
+            "      <AdSystem version=\"4.0\">iabtechlab</AdSystem>\n" +
+            "      <Error>http://example.com/error</Error>\n" +
+            "      <Impression id=\"Impression-ID\">http://example.com/track/impression</Impression>\n" +
+            "      <VASTAdTagURI>\n" +
+            "        <![CDATA[https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%204.0%20Samples/Inline_Companion_Tag-test.xml]]>\n" +
+            "      </VASTAdTagURI>\n" +
+            "    </Wrapper>\n" +
+            "  </Ad>\n" +
+            "</VAST>";
+
+    @Test
+    public void testVast2() throws VastUnwrapException {
+        com.asteriosoft.vast.v2.VAST vast2WithCompanions = (com.asteriosoft.vast.v2.VAST) VastUnwrapUtils.parseVast(VAST2_WRAPPER_WITH_COMPANIONS);
+        assertNotNull(vast2WithCompanions);
+        assertNotNull(vast2WithCompanions.getAd());
+        assertEquals(1, vast2WithCompanions.getAd().size());
+
+        assertNull(VastUnwrapUtils.getWrapperInfo(vast2WithCompanions));
+
+        com.asteriosoft.vast.v2.VAST vast2WithoutCompanions = (com.asteriosoft.vast.v2.VAST) VastUnwrapUtils.parseVast(VAST2_WRAPPER_WITHOUT_COMPANIONS);
+        assertNotNull(vast2WithoutCompanions);
+        assertNotNull(vast2WithoutCompanions.getAd());
+        assertEquals(1, vast2WithoutCompanions.getAd().size());
+
+        Pair<String, Map<String, List<String>>> wrapperInfo = VastUnwrapUtils.getWrapperInfo(vast2WithoutCompanions);
+        assertNotNull(wrapperInfo);
+        assertEquals("http://demo.tremormedia.com/proddev/vast/vast_inline_nonlinear3.xml", wrapperInfo.getLeft());
+
+        Map<String, List<String>> trackers = wrapperInfo.getRight();
+        assertEquals(1, trackers.size());
+        List<String> impressions = trackers.get(VASTTag.UrlImpressions.getTagName());
+        assertTrue(CollectionUtils.isNotEmpty(impressions) && impressions.size() == 1);
+        assertEquals("http://myTrackingURL/wrapper/impression", impressions.get(0));
+    }
+
+    @Test
+    public void testVast3() throws VastUnwrapException {
+        com.asteriosoft.vast.v3.VAST vast3WithCompanions = (com.asteriosoft.vast.v3.VAST) VastUnwrapUtils.parseVast(VAST3_WRAPPER_WITH_COMPANIONS);
+        assertNotNull(vast3WithCompanions);
+        assertNotNull(vast3WithCompanions.getAd());
+        assertEquals(1, vast3WithCompanions.getAd().size());
+
+        assertNull(VastUnwrapUtils.getWrapperInfo(vast3WithCompanions));
+
+        com.asteriosoft.vast.v3.VAST vast3WithoutCompanions = (com.asteriosoft.vast.v3.VAST) VastUnwrapUtils.parseVast(VAST3_WRAPPER_WITHOUT_COMPANIONS);
+        assertNotNull(vast3WithoutCompanions);
+        assertNotNull(vast3WithoutCompanions.getAd());
+        assertEquals(1, vast3WithoutCompanions.getAd().size());
+
+        Pair<String, Map<String, List<String>>> wrapperInfo = VastUnwrapUtils.getWrapperInfo(vast3WithoutCompanions);
+        assertNotNull(wrapperInfo);
+        assertEquals("https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%203.0%20Samples/Inline_Companion_Tag-test.xml", wrapperInfo.getLeft());
+
+        Map<String, List<String>> trackers = wrapperInfo.getRight();
+        assertEquals(2, trackers.size());
+        List<String> impressions = trackers.get(VASTTag.UrlImpressions.getTagName());
+        assertTrue(CollectionUtils.isNotEmpty(impressions) && impressions.size() == 1);
+        assertEquals("http://example.com/track/impression", impressions.get(0));
+
+        List<String> errors = trackers.get(VASTTag.UrlErrors.getTagName());
+        assertTrue(CollectionUtils.isNotEmpty(errors) && errors.size() == 1);
+        assertEquals("http://example.com/error", errors.get(0));
+    }
+
+    @Test
+    public void testVast4() throws VastUnwrapException {
+        com.asteriosoft.vast.v4.VAST vast4WithCompanions = (com.asteriosoft.vast.v4.VAST) VastUnwrapUtils.parseVast(VAST4_WRAPPER_WITH_COMPANIONS);
+        assertNotNull(vast4WithCompanions);
+        assertNotNull(vast4WithCompanions.getAd());
+        assertEquals(1, vast4WithCompanions.getAd().size());
+
+        assertNull(VastUnwrapUtils.getWrapperInfo(vast4WithCompanions));
+
+        com.asteriosoft.vast.v4.VAST vast4WithoutCompanions = (com.asteriosoft.vast.v4.VAST) VastUnwrapUtils.parseVast(VAST4_WRAPPER_WITHOUT_COMPANIONS);
+        assertNotNull(vast4WithoutCompanions);
+        assertNotNull(vast4WithoutCompanions.getAd());
+        assertEquals(1, vast4WithoutCompanions.getAd().size());
+
+        Pair<String, Map<String, List<String>>> wrapperInfo = VastUnwrapUtils.getWrapperInfo(vast4WithoutCompanions);
+        assertNotNull(wrapperInfo);
+        assertEquals("https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%204.0%20Samples/Inline_Companion_Tag-test.xml", wrapperInfo.getLeft());
+
+        Map<String, List<String>> trackers = wrapperInfo.getRight();
+        assertEquals(2, trackers.size());
+        List<String> impressions = trackers.get(VASTTag.UrlImpressions.getTagName());
+        assertTrue(CollectionUtils.isNotEmpty(impressions) && impressions.size() == 1);
+        assertEquals("http://example.com/track/impression", impressions.get(0));
+
+        List<String> errors = trackers.get(VASTTag.UrlErrors.getTagName());
+        assertTrue(CollectionUtils.isNotEmpty(errors) && errors.size() == 1);
+        assertEquals("http://example.com/error", errors.get(0));
     }
 }

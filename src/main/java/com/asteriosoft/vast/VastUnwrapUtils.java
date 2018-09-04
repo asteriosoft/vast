@@ -1,5 +1,17 @@
 package com.asteriosoft.vast;
 
+import com.asteriosoft.vast.v2.VAST;
+import com.asteriosoft.vast.v4.AnyURIType;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class VastUnwrapUtils extends VastUtils {
 
     public static Object parseVast(String vast) throws VastUnwrapException {
@@ -12,5 +24,105 @@ public class VastUnwrapUtils extends VastUtils {
         } catch (Exception err) {
             throw new VastUnwrapException(err);
         }
+    }
+
+    public static Pair<String, Map<String, List<String>>> getWrapperInfo(Object vast) {
+        if (vast instanceof com.asteriosoft.vast.v2.VAST) {
+            List<com.asteriosoft.vast.v2.VAST.Ad> adList = ((com.asteriosoft.vast.v2.VAST) vast).getAd();
+            if (CollectionUtils.isEmpty(adList) || adList.size() > 1) {
+                return null;
+            }
+            com.asteriosoft.vast.v2.VAST.Ad vast2Ad = adList.get(0);
+            VAST.Ad.Wrapper wrapper = vast2Ad.getWrapper();
+            if (wrapper == null) {
+                return null;
+            }
+            if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
+                return null;
+            }
+            String vastAdTagURI = StringUtils.trimToEmpty(wrapper.getVASTAdTagURI());
+            if (isUrl(vastAdTagURI)) {
+                List<String> impressions = wrapper.getImpression();
+                List<String> errors = StringUtils.isBlank(wrapper.getError()) ? Collections.emptyList() : Collections.singletonList(wrapper.getError());
+
+                return Pair.of(vastAdTagURI, createTrackersMap(impressions, errors));
+            }
+            return null;
+        } else if (vast instanceof com.asteriosoft.vast.v3.VAST) {
+            List<com.asteriosoft.vast.v3.VAST.Ad> adList = ((com.asteriosoft.vast.v3.VAST) vast).getAd();
+            if (CollectionUtils.isEmpty(adList) || adList.size() > 1) {
+                return null;
+            }
+            com.asteriosoft.vast.v3.VAST.Ad vast3Ad = adList.get(0);
+            com.asteriosoft.vast.v3.VAST.Ad.Wrapper wrapper = vast3Ad.getWrapper();
+            if (wrapper == null) {
+                return null;
+            }
+            if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
+                return null;
+            }
+            String vastAdTagURI = StringUtils.trimToEmpty(wrapper.getVASTAdTagURI());
+            if (isUrl(vastAdTagURI)) {
+                List<String> impressions = wrapper.getImpression();
+                List<String> errors = StringUtils.isBlank(wrapper.getError()) ? Collections.emptyList() : Collections.singletonList(wrapper.getError());
+
+                return Pair.of(vastAdTagURI, createTrackersMap(impressions, errors));
+            }
+            return null;
+        } else if (vast instanceof com.asteriosoft.vast.v4.VAST) {
+            List<com.asteriosoft.vast.v4.VAST.Ad> adList = ((com.asteriosoft.vast.v4.VAST) vast).getAd();
+            if (CollectionUtils.isEmpty(adList) || adList.size() > 1) {
+                return null;
+            }
+            com.asteriosoft.vast.v4.VAST.Ad vast4Ad = adList.get(0);
+            com.asteriosoft.vast.v4.VAST.Ad.Wrapper wrapper = vast4Ad.getWrapper();
+            if (wrapper == null) {
+                return null;
+            }
+            if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
+                return null;
+            }
+            String vastAdTagURI = StringUtils.trimToEmpty(wrapper.getVASTAdTagURI());
+            if (isUrl(vastAdTagURI)) {
+
+                List<String> impressions = null;
+                List<AnyURIType> anyURITypes = wrapper.getImpression();
+                if (CollectionUtils.isNotEmpty(anyURITypes)) {
+                    impressions = new ArrayList<>(anyURITypes.size());
+                    for (AnyURIType anyURIType : anyURITypes) {
+                        String value = anyURIType.getValue();
+                        if (StringUtils.isNotBlank(value)) {
+                            impressions.add(value);
+                        }
+                    }
+                }
+
+                return Pair.of(vastAdTagURI, createTrackersMap(impressions, wrapper.getError()));
+            }
+            return null;
+        } else {
+            return null;
+        }
+    }
+
+    private static Map<String, List<String>> createTrackersMap(List<String> impressions, List<String> errors) {
+
+        Map<String, List<String>> trackers = Collections.emptyMap();
+
+        if (CollectionUtils.isEmpty(errors) && CollectionUtils.isNotEmpty(impressions)) {
+            trackers = Collections.singletonMap(VASTTag.UrlImpressions.getTagName(), impressions);
+        } else if (CollectionUtils.isEmpty(impressions) && CollectionUtils.isNotEmpty(errors)) {
+            trackers = Collections.singletonMap(VASTTag.UrlErrors.getTagName(), errors);
+        } else if (CollectionUtils.isNotEmpty(impressions) && CollectionUtils.isNotEmpty(errors)) {
+            trackers = new HashMap<>(2);
+            trackers.put(VASTTag.UrlImpressions.getTagName(), impressions);
+            trackers.put(VASTTag.UrlErrors.getTagName(), errors);
+        }
+
+        return trackers;
+    }
+
+    private static boolean isUrl(String vastAdTagURI) {
+        return StringUtils.startsWithIgnoreCase(vastAdTagURI, "http");
     }
 }
