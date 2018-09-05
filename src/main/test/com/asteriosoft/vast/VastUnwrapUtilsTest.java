@@ -116,13 +116,13 @@ public class VastUnwrapUtilsTest {
         assertNotNull(vast2WithoutCompanions.getAd());
         assertEquals(1, vast2WithoutCompanions.getAd().size());
 
-        Pair<String, Map<String, List<String>>> wrapperInfo = VastUnwrapUtils.getWrapperInfo(vast2WithoutCompanions);
+        Pair<String, Map<String, Object>> wrapperInfo = VastUnwrapUtils.getWrapperInfo(vast2WithoutCompanions);
         assertNotNull(wrapperInfo);
         assertEquals("http://demo.tremormedia.com/proddev/vast/vast_inline_nonlinear3.xml", wrapperInfo.getLeft());
 
-        Map<String, List<String>> trackers = wrapperInfo.getRight();
+        Map<String, Object> trackers = wrapperInfo.getRight();
         assertEquals(1, trackers.size());
-        List<String> impressions = trackers.get(VASTTag.UrlImpressions.getTagName());
+        List<String> impressions = (List<String>) trackers.get(VASTTag.UrlImpressions.getTagName());
         assertTrue(CollectionUtils.isNotEmpty(impressions) && impressions.size() == 1);
         assertEquals("http://myTrackingURL/wrapper/impression", impressions.get(0));
     }
@@ -141,17 +141,17 @@ public class VastUnwrapUtilsTest {
         assertNotNull(vast3WithoutCompanions.getAd());
         assertEquals(1, vast3WithoutCompanions.getAd().size());
 
-        Pair<String, Map<String, List<String>>> wrapperInfo = VastUnwrapUtils.getWrapperInfo(vast3WithoutCompanions);
+        Pair<String, Map<String, Object>> wrapperInfo = VastUnwrapUtils.getWrapperInfo(vast3WithoutCompanions);
         assertNotNull(wrapperInfo);
         assertEquals("https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%203.0%20Samples/Inline_Companion_Tag-test.xml", wrapperInfo.getLeft());
 
-        Map<String, List<String>> trackers = wrapperInfo.getRight();
+        Map<String, Object> trackers = wrapperInfo.getRight();
         assertEquals(2, trackers.size());
-        List<String> impressions = trackers.get(VASTTag.UrlImpressions.getTagName());
+        List<String> impressions = (List<String>) trackers.get(VASTTag.UrlImpressions.getTagName());
         assertTrue(CollectionUtils.isNotEmpty(impressions) && impressions.size() == 1);
         assertEquals("http://example.com/track/impression", impressions.get(0));
 
-        List<String> errors = trackers.get(VASTTag.UrlErrors.getTagName());
+        List<String> errors = (List<String>) trackers.get(VASTTag.UrlErrors.getTagName());
         assertTrue(CollectionUtils.isNotEmpty(errors) && errors.size() == 1);
         assertEquals("http://example.com/error", errors.get(0));
     }
@@ -170,17 +170,17 @@ public class VastUnwrapUtilsTest {
         assertNotNull(vast4WithoutCompanions.getAd());
         assertEquals(1, vast4WithoutCompanions.getAd().size());
 
-        Pair<String, Map<String, List<String>>> wrapperInfo = VastUnwrapUtils.getWrapperInfo(vast4WithoutCompanions);
+        Pair<String, Map<String, Object>> wrapperInfo = VastUnwrapUtils.getWrapperInfo(vast4WithoutCompanions);
         assertNotNull(wrapperInfo);
         assertEquals("https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%204.0%20Samples/Inline_Companion_Tag-test.xml", wrapperInfo.getLeft());
 
-        Map<String, List<String>> trackers = wrapperInfo.getRight();
+        Map<String, Object> trackers = wrapperInfo.getRight();
         assertEquals(2, trackers.size());
-        List<String> impressions = trackers.get(VASTTag.UrlImpressions.getTagName());
+        List<String> impressions = (List<String>) trackers.get(VASTTag.UrlImpressions.getTagName());
         assertTrue(CollectionUtils.isNotEmpty(impressions) && impressions.size() == 1);
         assertEquals("http://example.com/track/impression", impressions.get(0));
 
-        List<String> errors = trackers.get(VASTTag.UrlErrors.getTagName());
+        List<String> errors = (List<String>) trackers.get(VASTTag.UrlErrors.getTagName());
         assertTrue(CollectionUtils.isNotEmpty(errors) && errors.size() == 1);
         assertEquals("http://example.com/error", errors.get(0));
     }

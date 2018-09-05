@@ -26,7 +26,7 @@ public class VastUnwrapUtils extends VastUtils {
         }
     }
 
-    public static Pair<String, Map<String, List<String>>> getWrapperInfo(Object vast) {
+    public static Pair<String, Map<String, Object>> getWrapperInfo(Object vast) {
         if (vast instanceof com.asteriosoft.vast.v2.VAST) {
             List<com.asteriosoft.vast.v2.VAST.Ad> adList = ((com.asteriosoft.vast.v2.VAST) vast).getAd();
             if (CollectionUtils.isEmpty(adList) || adList.size() > 1) {
@@ -105,9 +105,9 @@ public class VastUnwrapUtils extends VastUtils {
         }
     }
 
-    private static Map<String, List<String>> createTrackersMap(List<String> impressions, List<String> errors) {
+    private static Map<String, Object> createTrackersMap(List<String> impressions, List<String> errors) {
 
-        Map<String, List<String>> trackers = Collections.emptyMap();
+        Map<String, Object> trackers = Collections.emptyMap();
 
         if (CollectionUtils.isEmpty(errors) && CollectionUtils.isNotEmpty(impressions)) {
             trackers = Collections.singletonMap(VASTTag.UrlImpressions.getTagName(), impressions);
