@@ -4,7 +4,6 @@ import com.asteriosoft.vast.v2.VAST;
 import com.asteriosoft.vast.v4.AnyURIType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,61 +25,63 @@ public class VastUnwrapUtils extends VastUtils {
         }
     }
 
-    public static Pair<String, Map<String, Object>> getWrapperInfo(Object vast) {
+    public static VastWrapperInfo getWrapperInfo(Object vast) {
         if (vast instanceof com.asteriosoft.vast.v2.VAST) {
             List<com.asteriosoft.vast.v2.VAST.Ad> adList = ((com.asteriosoft.vast.v2.VAST) vast).getAd();
             if (CollectionUtils.isEmpty(adList) || adList.size() > 1) {
-                return null;
+                return VastWrapperInfo.MULTIPLE_ADS;
             }
             com.asteriosoft.vast.v2.VAST.Ad vast2Ad = adList.get(0);
             VAST.Ad.Wrapper wrapper = vast2Ad.getWrapper();
             if (wrapper == null) {
-                return null;
+                return VastWrapperInfo.NOT_WRAPPER;
             }
             if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
-                return null;
+                return VastWrapperInfo.CREATIVES;
             }
             String vastAdTagURI = StringUtils.trimToEmpty(wrapper.getVASTAdTagURI());
             if (isUrl(vastAdTagURI)) {
                 List<String> impressions = wrapper.getImpression();
                 List<String> errors = StringUtils.isBlank(wrapper.getError()) ? Collections.emptyList() : Collections.singletonList(wrapper.getError());
 
-                return Pair.of(vastAdTagURI, createTrackersMap(impressions, errors));
+                return new VastWrapperInfo(vastAdTagURI, createTrackersMap(impressions, errors));
+            } else {
+                return VastWrapperInfo.EMPTY_VASTTAGURI;
             }
-            return null;
         } else if (vast instanceof com.asteriosoft.vast.v3.VAST) {
             List<com.asteriosoft.vast.v3.VAST.Ad> adList = ((com.asteriosoft.vast.v3.VAST) vast).getAd();
             if (CollectionUtils.isEmpty(adList) || adList.size() > 1) {
-                return null;
+                return VastWrapperInfo.MULTIPLE_ADS;
             }
             com.asteriosoft.vast.v3.VAST.Ad vast3Ad = adList.get(0);
             com.asteriosoft.vast.v3.VAST.Ad.Wrapper wrapper = vast3Ad.getWrapper();
             if (wrapper == null) {
-                return null;
+                return VastWrapperInfo.NOT_WRAPPER;
             }
             if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
-                return null;
+                return VastWrapperInfo.CREATIVES;
             }
             String vastAdTagURI = StringUtils.trimToEmpty(wrapper.getVASTAdTagURI());
             if (isUrl(vastAdTagURI)) {
                 List<String> impressions = wrapper.getImpression();
                 List<String> errors = StringUtils.isBlank(wrapper.getError()) ? Collections.emptyList() : Collections.singletonList(wrapper.getError());
 
-                return Pair.of(vastAdTagURI, createTrackersMap(impressions, errors));
+                return new VastWrapperInfo(vastAdTagURI, createTrackersMap(impressions, errors));
+            } else {
+                return VastWrapperInfo.EMPTY_VASTTAGURI;
             }
-            return null;
         } else if (vast instanceof com.asteriosoft.vast.v4.VAST) {
             List<com.asteriosoft.vast.v4.VAST.Ad> adList = ((com.asteriosoft.vast.v4.VAST) vast).getAd();
             if (CollectionUtils.isEmpty(adList) || adList.size() > 1) {
-                return null;
+                return VastWrapperInfo.MULTIPLE_ADS;
             }
             com.asteriosoft.vast.v4.VAST.Ad vast4Ad = adList.get(0);
             com.asteriosoft.vast.v4.VAST.Ad.Wrapper wrapper = vast4Ad.getWrapper();
             if (wrapper == null) {
-                return null;
+                return VastWrapperInfo.NOT_WRAPPER;
             }
             if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
-                return null;
+                return VastWrapperInfo.CREATIVES;
             }
             String vastAdTagURI = StringUtils.trimToEmpty(wrapper.getVASTAdTagURI());
             if (isUrl(vastAdTagURI)) {
@@ -97,11 +98,12 @@ public class VastUnwrapUtils extends VastUtils {
                     }
                 }
 
-                return Pair.of(vastAdTagURI, createTrackersMap(impressions, wrapper.getError()));
+                return new VastWrapperInfo(vastAdTagURI, createTrackersMap(impressions, wrapper.getError()));
+            } else {
+                return VastWrapperInfo.EMPTY_VASTTAGURI;
             }
-            return null;
         } else {
-            return null;
+            return VastWrapperInfo.UNSUPPORTED_VERSION;
         }
     }
 
