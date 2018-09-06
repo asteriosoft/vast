@@ -2,6 +2,8 @@ package com.asteriosoft.vast;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
+
 public class VastUtils {
 
     private static final Vast2Helper vast2Helper = new Vast2Helper();
@@ -47,15 +49,29 @@ public class VastUtils {
     }
 
     public static VastVersion parseVastVersion(String vast) {
-        if (vast.contains("version=\"2.0\">")) {
-            return VastVersion.VAST2;
-        } else if (vast.contains("version=\"3.0\">")) {
-            return VastVersion.VAST3;
-        } else if (vast.contains("version=\"4.0\">")) {
-            return VastVersion.VAST4;
-        } else if (vast.contains("<VideoAdServingTemplate")) {
+        if (vast.contains("<VideoAdServingTemplate")) {
             return VastVersion.VAST1;
-        } else {
+        }
+        int versionIndex = vast.indexOf("version=\"");
+        if (versionIndex < 0) {
+            return VastVersion.VAST2;
+        }
+
+        int versionIndexStart = versionIndex + "version=\"".length();
+        int versionIndexEnd = vast.indexOf("\"", versionIndexStart + 1);
+        try {
+            String version = vast.substring(versionIndexStart, versionIndexEnd);
+            double v = Double.parseDouble(version);
+            if (Objects.equals(v, 2.0)) {
+                return VastVersion.VAST2;
+            } else if (Objects.equals(v, 3.0)) {
+                return VastVersion.VAST3;
+            } else if (Objects.equals(v, 4.0)) {
+                return VastVersion.VAST4;
+            } else {
+                return VastVersion.VAST2;
+            }
+        } catch (Exception e) {
             return VastVersion.VAST2;
         }
     }
