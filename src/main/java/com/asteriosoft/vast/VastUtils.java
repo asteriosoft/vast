@@ -52,7 +52,11 @@ public class VastUtils {
         if (vast.contains("<VideoAdServingTemplate")) {
             return VastVersion.VAST1;
         }
-        int versionIndex = vast.indexOf("version=\"");
+        int vastTagIndex = vast.indexOf("<VAST");
+        if (vastTagIndex < 0) {
+            return VastVersion.VAST2;
+        }
+        int versionIndex = vast.indexOf("version=\"", vastTagIndex);
         if (versionIndex < 0) {
             return VastVersion.VAST2;
         }

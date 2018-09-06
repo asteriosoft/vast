@@ -19,7 +19,7 @@ public class VastUnwrapUtilsTest {
 
     private static final String VAST2_WRAPPER_WITHOUT_COMPANIONS = "<VAST version=\"2.0\"><Ad id=\"602867\"><Wrapper><AdSystem>Acudeo Compatible</AdSystem><VASTAdTagURI>http://demo.tremormedia.com/proddev/vast/vast_inline_nonlinear3.xml</VASTAdTagURI><Impression>http://myTrackingURL/wrapper/impression</Impression></Wrapper></Ad></VAST>";
 
-    private static final String VAST3_WRAPPER_WITH_COMPANIONS = "<VAST version=\"3.0\">\n" +
+    private static final String VAST3_WRAPPER_WITH_COMPANIONS = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><VAST version=\"3.0\">\n" +
             "    <Ad id=\"20011\">\n" +
             "        <Wrapper>\n" +
             "            <AdSystem version=\"4.0\">iabtechlab</AdSystem>\n" +
@@ -61,7 +61,7 @@ public class VastUnwrapUtilsTest {
             "    </Ad>\n" +
             "</VAST>";
 
-    private static final String VAST4_WRAPPER_WITH_COMPANIONS = "<VAST version=\"4.0\" xmlns=\"http://www.iab.com/VAST\">\n" +
+    private static final String VAST4_WRAPPER_WITH_COMPANIONS = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><VAST version=\"4.0\" xmlns=\"http://www.iab.com/VAST\">\n" +
             "  <Ad id=\"20011\" sequence=\"1\" conditionalAd=\"false\">\n" +
             "    <Wrapper followAdditionalWrappers=\"0\" allowMultipleAds=\"1\" fallbackOnNoAd=\"0\">\n" +
             "      <AdSystem version=\"4.0\">iabtechlab</AdSystem>\n" +
@@ -88,7 +88,7 @@ public class VastUnwrapUtilsTest {
             "  </Ad>\n" +
             "</VAST>";
 
-    private static final String VAST4_WRAPPER_WITHOUT_COMPANIONS = "<VAST version=\"4.0\" xmlns=\"http://www.iab.com/VAST\">\n" +
+    private static final String VAST4_WRAPPER_WITHOUT_COMPANIONS = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><VAST version=\"4.0\" xmlns=\"http://www.iab.com/VAST\">\n" +
             "  <Ad id=\"20011\" sequence=\"1\" conditionalAd=\"false\">\n" +
             "    <Wrapper followAdditionalWrappers=\"0\" allowMultipleAds=\"1\" fallbackOnNoAd=\"0\">\n" +
             "      <AdSystem version=\"4.0\">iabtechlab</AdSystem>\n" +
