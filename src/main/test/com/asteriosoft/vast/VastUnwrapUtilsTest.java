@@ -183,4 +183,13 @@ public class VastUnwrapUtilsTest {
         assertTrue(CollectionUtils.isNotEmpty(errors) && errors.size() == 1);
         assertEquals("http://example.com/error", errors.get(0));
     }
+
+    @Test
+    public void emptyVast() throws VastUnwrapException {
+        String vast = "<VAST version=\"2.0\"></VAST>";
+
+        com.asteriosoft.vast.v2.VAST emtyVast = (com.asteriosoft.vast.v2.VAST) VastUnwrapUtils.parseVast(vast);
+        VastWrapperInfo wrapperInfo = VastUnwrapUtils.getWrapperInfo(emtyVast);
+        assertEquals(wrapperInfo.getNonUnwrapableReason(), NonUnwrupableReason.NoAds);
+    }
 }

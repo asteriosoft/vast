@@ -4,6 +4,7 @@ import java.util.Map;
 
 public class VastWrapperInfo {
 
+    public static final VastWrapperInfo NO_ADS = new VastWrapperInfo(NonUnwrupableReason.NoAds);
     public static final VastWrapperInfo MULTIPLE_ADS = new VastWrapperInfo(NonUnwrupableReason.MultipleAds);
     public static final VastWrapperInfo NOT_WRAPPER = new VastWrapperInfo(NonUnwrupableReason.NotWrapper);
     public static final VastWrapperInfo CREATIVES = new VastWrapperInfo(NonUnwrupableReason.Creatives);

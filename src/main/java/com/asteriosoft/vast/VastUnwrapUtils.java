@@ -28,7 +28,10 @@ public class VastUnwrapUtils extends VastUtils {
     public static VastWrapperInfo getWrapperInfo(Object vast) {
         if (vast instanceof com.asteriosoft.vast.v2.VAST) {
             List<com.asteriosoft.vast.v2.VAST.Ad> adList = ((com.asteriosoft.vast.v2.VAST) vast).getAd();
-            if (CollectionUtils.isEmpty(adList) || adList.size() > 1) {
+            if (CollectionUtils.isEmpty(adList)) {
+                return VastWrapperInfo.NO_ADS;
+            }
+            if (adList.size() > 1) {
                 return VastWrapperInfo.MULTIPLE_ADS;
             }
             com.asteriosoft.vast.v2.VAST.Ad vast2Ad = adList.get(0);
@@ -50,7 +53,10 @@ public class VastUnwrapUtils extends VastUtils {
             }
         } else if (vast instanceof com.asteriosoft.vast.v3.VAST) {
             List<com.asteriosoft.vast.v3.VAST.Ad> adList = ((com.asteriosoft.vast.v3.VAST) vast).getAd();
-            if (CollectionUtils.isEmpty(adList) || adList.size() > 1) {
+            if (CollectionUtils.isEmpty(adList)) {
+                return VastWrapperInfo.NO_ADS;
+            }
+            if (adList.size() > 1) {
                 return VastWrapperInfo.MULTIPLE_ADS;
             }
             com.asteriosoft.vast.v3.VAST.Ad vast3Ad = adList.get(0);
@@ -72,7 +78,10 @@ public class VastUnwrapUtils extends VastUtils {
             }
         } else if (vast instanceof com.asteriosoft.vast.v4.VAST) {
             List<com.asteriosoft.vast.v4.VAST.Ad> adList = ((com.asteriosoft.vast.v4.VAST) vast).getAd();
-            if (CollectionUtils.isEmpty(adList) || adList.size() > 1) {
+            if (CollectionUtils.isEmpty(adList)) {
+                return VastWrapperInfo.NO_ADS;
+            }
+            if (adList.size() > 1) {
                 return VastWrapperInfo.MULTIPLE_ADS;
             }
             com.asteriosoft.vast.v4.VAST.Ad vast4Ad = adList.get(0);
