@@ -14,6 +14,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,11 +36,12 @@ public final class Vast4Helper extends BaseVastHelper {
 
         for (Ad ad : ads) {
 
-            if (ad.getWrapper() != null) {
+            Ad.Wrapper wrapper = ad.getWrapper();
+            if (wrapper != null) {
 
                 // error
                 if (StringUtils.isNotEmpty(errorUrl)) {
-                    List<String> errors = ad.getWrapper().getError();
+                    List<String> errors = wrapper.getError();
                     if (CollectionUtils.isNotEmpty(errors)) {
                         int i = 0;
                         for (String error : errors) {
@@ -53,21 +55,30 @@ public final class Vast4Helper extends BaseVastHelper {
                     } else {
                         errors = Collections.singletonList(errorUrl);
                     }
-                    ad.getWrapper().setError(errors);
+                    wrapper.setError(errors);
                 }
 
                 // impression
                 if (CollectionUtils.isNotEmpty(imprUrls)) {
-                    List<AnyURIType> impressions = ad.getWrapper().getImpression();
-                    impressions.removeIf(t -> StringUtils.isBlank(t.getValue()));
+                    List<AnyURIType> impressions = wrapper.getImpression();
+                    if (impressions == null) {
+                        impressions = Collections.emptyList();
+                    }
+                    if (!impressions.isEmpty()) {
+                        impressions.removeIf(t -> StringUtils.isBlank(t.getValue()));
+                    }
+                    wrapper.setImpression(new ArrayList<>(impressions.size() + imprUrls.size()));
                     for (String imprUrl : imprUrls) {
                         AnyURIType impr = new AnyURIType();
                         impr.setValue(imprUrl);
-                        impressions.add(impr);
+                        wrapper.getImpression().add(impr);
+                    }
+                    if (!impressions.isEmpty()) {
+                        wrapper.getImpression().addAll(impressions);
                     }
                 }
 
-                Ad.Wrapper.Creatives creatives = ad.getWrapper().getCreatives();
+                Ad.Wrapper.Creatives creatives = wrapper.getCreatives();
                 if (creatives != null) {
                     for (Ad.Wrapper.Creatives.Creative creative : creatives.getCreative()) {
                         // LINEAR
@@ -153,11 +164,12 @@ public final class Vast4Helper extends BaseVastHelper {
                 }
             }
 
-            if (ad.getInLine() != null) {
+            Ad.InLine inLine = ad.getInLine();
+            if (inLine != null) {
 
                 // error
                 if (StringUtils.isNotEmpty(errorUrl)) {
-                    List<String> errors = ad.getInLine().getError();
+                    List<String> errors = inLine.getError();
                     if (CollectionUtils.isNotEmpty(errors)) {
                         int i = 0;
                         for (String error : errors) {
@@ -171,21 +183,30 @@ public final class Vast4Helper extends BaseVastHelper {
                     } else {
                         errors = Collections.singletonList(errorUrl);
                     }
-                    ad.getInLine().setError(errors);
+                    inLine.setError(errors);
                 }
 
                 // impression
                 if (CollectionUtils.isNotEmpty(imprUrls)) {
-                    for (String imprUrl : imprUrls) {
-                        List<AnyURIType> impressions = ad.getInLine().getImpression();
+                    List<AnyURIType> impressions = inLine.getImpression();
+                    if (impressions == null) {
+                        impressions = Collections.emptyList();
+                    }
+                    if (!impressions.isEmpty()) {
                         impressions.removeIf(t -> StringUtils.isBlank(t.getValue()));
+                    }
+                    inLine.setImpression(new ArrayList<>(impressions.size() + imprUrls.size()));
+                    for (String imprUrl : imprUrls) {
                         AnyURIType impr = new AnyURIType();
                         impr.setValue(imprUrl);
-                        impressions.add(impr);
+                        inLine.getImpression().add(impr);
+                    }
+                    if (!impressions.isEmpty()) {
+                        inLine.getImpression().addAll(impressions);
                     }
                 }
 
-                Ad.InLine.Creatives creatives = ad.getInLine().getCreatives();
+                Ad.InLine.Creatives creatives = inLine.getCreatives();
 
                 if (creatives != null) {
                     List<Ad.InLine.Creatives.Creative> creativeAds = creatives.getCreative();

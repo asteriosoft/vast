@@ -11,6 +11,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -31,26 +33,37 @@ public final class Vast2Helper extends BaseVastHelper {
 
         for (Ad ad : ads) {
 
-            if (ad.getWrapper() != null) {
+            Ad.Wrapper wrapper = ad.getWrapper();
+            if (wrapper != null) {
 
                 // error
                 if (StringUtils.isNotEmpty(errorUrl)) {
-                    String error = ad.getWrapper().getError();
+                    String error = wrapper.getError();
                     if (StringUtils.isBlank(error)) {
                         error = errorUrl;
                     } else {
                         error = errorUrl + "&errorUrl=" + encodeUrl(error);
                     }
-                    ad.getWrapper().setError(error);
+                    wrapper.setError(error);
                 }
 
                 // impression
                 if (CollectionUtils.isNotEmpty(imprUrls)) {
-                    List<String> impressions = ad.getWrapper().getImpression();
-                    impressions.addAll(imprUrls);
+                    List<String> impressions = wrapper.getImpression();
+                    if (impressions == null) {
+                        impressions = Collections.emptyList();
+                    }
+                    if (!impressions.isEmpty()) {
+                        impressions.removeIf(StringUtils::isBlank);
+                    }
+                    wrapper.setImpression(new ArrayList<>(impressions.size() + imprUrls.size()));
+                    wrapper.getImpression().addAll(imprUrls);
+                    if (!impressions.isEmpty()) {
+                        wrapper.getImpression().addAll(impressions);
+                    }
                 }
 
-                VAST.Ad.Wrapper.Creatives creatives = ad.getWrapper().getCreatives();
+                VAST.Ad.Wrapper.Creatives creatives = wrapper.getCreatives();
                 if (creatives != null) {
                     for (VAST.Ad.Wrapper.Creatives.Creative creative : creatives.getCreative()) {
                         // LINEAR
@@ -120,31 +133,41 @@ public final class Vast2Helper extends BaseVastHelper {
                 }
             }
 
-            if (ad.getInLine() != null) {
+            Ad.InLine inLine = ad.getInLine();
+            if (inLine != null) {
 
                 // error
                 if (StringUtils.isNotEmpty(errorUrl)) {
-                    String error = ad.getInLine().getError();
+                    String error = inLine.getError();
                     if (StringUtils.isBlank(error)) {
                         error = errorUrl;
                     } else {
                         error = errorUrl + "&errorUrl=" + encodeUrl(error);
                     }
-                    ad.getInLine().setError(error);
+                    inLine.setError(error);
                 }
 
                 // impression
                 if (CollectionUtils.isNotEmpty(imprUrls)) {
-                    for (String imprUrl : imprUrls) {
-                        List<ImpressionType> impressions = ad.getInLine().getImpression();
+                    List<ImpressionType> impressions = inLine.getImpression();
+                    if (impressions == null) {
+                        impressions = Collections.emptyList();
+                    }
+                    if (!impressions.isEmpty()) {
                         impressions.removeIf(t -> StringUtils.isBlank(t.getValue()));
+                    }
+                    inLine.setImpression(new ArrayList<>(impressions.size() + imprUrls.size()));
+                    for (String imprUrl : imprUrls) {
                         ImpressionType impr = new ImpressionType();
                         impr.setValue(imprUrl);
-                        impressions.add(impr);
+                        inLine.getImpression().add(impr);
+                    }
+                    if (!impressions.isEmpty()) {
+                        inLine.getImpression().addAll(impressions);
                     }
                 }
 
-                VAST.Ad.InLine.Creatives creatives = ad.getInLine().getCreatives();
+                VAST.Ad.InLine.Creatives creatives = inLine.getCreatives();
 
                 if (creatives != null) {
                     List<VAST.Ad.InLine.Creatives.Creative> creativeAds = creatives.getCreative();
