@@ -3,6 +3,9 @@ package com.asteriosoft.vast;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+
 public final class VastTrackers {
 
 	private final List<String> impressionUrls;
@@ -52,4 +55,8 @@ public final class VastTrackers {
 				+ nonLinearTrackingUrls + "]";
 	}
 
+	public boolean isEmpty() {
+		return CollectionUtils.isEmpty(errorUrls) && CollectionUtils.isEmpty(impressionUrls) && CollectionUtils.isEmpty(linearClickUrls)
+				&& MapUtils.isEmpty(linearTrackingUrls) && MapUtils.isEmpty(nonLinearTrackingUrls);
+	}
 }

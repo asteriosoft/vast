@@ -108,6 +108,10 @@ public final class VastUtils {
     }
     
     public static String addVastTrackingUrls(String vastStr, VastTrackers trackers) throws VastUtilsException {
+    	if (trackers == null || trackers.isEmpty()) {
+    		return vastStr;
+    	}
+    	//
         try {
             vastStr = cutVast(vastStr);
             VastHelper<?> vastHelper = getVastHelper(vastStr);
