@@ -2,37 +2,41 @@ package com.asteriosoft.vast;
 
 import java.util.Map;
 
-public class VastWrapperInfo {
+public final class VastWrapperInfo {
 
-    public static final VastWrapperInfo NO_ADS = new VastWrapperInfo(NonUnwrupableReason.NoAds);
-    public static final VastWrapperInfo MULTIPLE_ADS = new VastWrapperInfo(NonUnwrupableReason.MultipleAds);
-    public static final VastWrapperInfo NOT_WRAPPER = new VastWrapperInfo(NonUnwrupableReason.NotWrapper);
-    public static final VastWrapperInfo CREATIVES = new VastWrapperInfo(NonUnwrupableReason.Creatives);
-    public static final VastWrapperInfo EMPTY_VASTTAGURI = new VastWrapperInfo(NonUnwrupableReason.EmptyVastTagURI);
-    public static final VastWrapperInfo UNSUPPORTED_VERSION = new VastWrapperInfo(NonUnwrupableReason.UnsupportedVastVersion);
+    public static final VastWrapperInfo NO_ADS = new VastWrapperInfo(NonUnwrappableReason.NoAds);
+    public static final VastWrapperInfo MULTIPLE_ADS = new VastWrapperInfo(NonUnwrappableReason.MultipleAds);
+    public static final VastWrapperInfo NOT_WRAPPER = new VastWrapperInfo(NonUnwrappableReason.NotWrapper);
+    public static final VastWrapperInfo EMPTY_VASTTAGURI = new VastWrapperInfo(NonUnwrappableReason.EmptyVastTagURI);
+    public static final VastWrapperInfo UNSUPPORTED_VERSION = new VastWrapperInfo(NonUnwrappableReason.UnsupportedVastVersion);
 
     private String vastTagURI;
-    private Map<String, Object> trackers;
-    private NonUnwrupableReason nonUnwrapableReason;
+    private NonUnwrappableReason nonUnwrappableReason;
+    private VastTrackers trackers;
 
-    public VastWrapperInfo(String vastTagURI, Map<String, Object> trackers) {
+    public VastWrapperInfo(String vastTagURI, VastTrackers trackers) {
         this.vastTagURI = vastTagURI;
         this.trackers = trackers;
     }
 
-    public VastWrapperInfo(NonUnwrupableReason nonUnwrapableReason) {
-        this.nonUnwrapableReason = nonUnwrapableReason;
+    public VastWrapperInfo(NonUnwrappableReason nonUnwrapableReason) {
+        this.nonUnwrappableReason = nonUnwrapableReason;
     }
 
     public String getVastTagURI() {
         return vastTagURI;
     }
 
-    public Map<String, Object> getTrackers() {
+    public VastTrackers getTrackers() {
         return trackers;
     }
 
-    public NonUnwrupableReason getNonUnwrapableReason() {
-        return nonUnwrapableReason;
+    public NonUnwrappableReason getNonUnwrappableReason() {
+        return nonUnwrappableReason;
     }
+
+	@Override
+	public String toString() {
+		return "VastWrapperInfo [vastTagURI=" + vastTagURI + ", nonUnwrappableReason=" + nonUnwrappableReason + ", trackers=" + trackers + "]";
+	}
 }

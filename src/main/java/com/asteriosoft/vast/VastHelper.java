@@ -6,7 +6,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-abstract class BaseVastHelper {
+abstract class VastHelper<V> {
 
     private static final char[] XML_NS = " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"\"".toCharArray();
     private static final char[] EXTENSIONS_START = "<Extensions>".toCharArray();
@@ -111,32 +111,35 @@ abstract class BaseVastHelper {
         return (T) data.get(key);
     }
 
-    String marshal(Object vast, XmlMarshaling xmlMarshaling) throws XmlMarshalingException {
-        return xmlMarshaling.marshal(vast);
+    String marshal(V vast) throws XmlMarshalingException {
+        return getXmlMarshaling().marshal(vast);
     }
 
-    <T> T unmarshal(String str, XmlMarshaling xmlMarshaling, Class<T> clazz) throws XmlMarshalingException {
+    V unmarshal(String str) throws XmlMarshalingException {
         if (StringUtils.isEmpty(str)) {
             return null;
         }
         str = replaceAmpersandChar(str);
-        return xmlMarshaling.unmarshal(str, clazz);
+        return (V) getXmlMarshaling().unmarshal(str, getVastClass());
     }
 
-    String addVastTrackingUrls(String vastStr, Map<String, Object> vastdata) throws XmlMarshalingException {
-        String result = injectTracking(vastStr, vastdata);
+    String addVastTrackingUrls(String vastStr, VastTrackers trackers) throws XmlMarshalingException {
+        String result = injectTracking(vastStr, trackers);
         return patchExtensions(result);
     }
 
+    /*
+    String addVastTrackingUrls(V vast, VastTrackers trackers) throws XmlMarshalingException {
+        String result = injectTracking(vast, trackers);
+        return patchExtensions(result);
+    }*/
+    
     protected abstract VastVersion getVastVersion();
 
-    protected abstract String injectTracking(String vastStr, Map<String, Object> vastdata) throws XmlMarshalingException;
-
+    protected abstract String injectTracking(String vastStr, VastTrackers trackers) throws XmlMarshalingException;
+    //protected abstract String injectTracking(V vast, VastTrackers trackers) throws XmlMarshalingException;
+    
     protected abstract XmlMarshaling getXmlMarshaling();
-
-    Object unmarshal(String vast) throws XmlMarshalingException {
-        return unmarshal(vast, getXmlMarshaling(), getVastClass());
-    }
 
     protected abstract Class<?> getVastClass();
 }

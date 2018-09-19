@@ -7,7 +7,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.stream.StreamSource;
@@ -22,7 +21,6 @@ public final class XmlMarshaling {
     private final Map<String, Object> marshallerProperties;
 
     private final JAXBContext jaxbContext;
-    private final XMLInputFactory xmlInputFactory;
     private final XMLOutputFactory xmlOutputFactory;
     private final ThreadLocal<Unmarshaller> unmarshallerThreadLocal = new ThreadLocal<>();
     private final ThreadLocal<Marshaller> marshallerThreadLocal = new ThreadLocal<>();
@@ -32,9 +30,7 @@ public final class XmlMarshaling {
     }
 
     private XmlMarshaling(Map<String, Object> jaxbContextProperties, Map<String, Object> marshallerProperties, Class<?>... classesToBeBound) {
-        xmlInputFactory = XMLInputFactory.newInstance();
         xmlOutputFactory = XMLOutputFactory.newInstance();
-
         this.marshallerProperties = marshallerProperties;
 
         try {

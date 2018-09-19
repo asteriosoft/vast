@@ -16,18 +16,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public final class Vast2Helper extends BaseVastHelper {
+final class Vast2 extends VastHelper<VAST> {
 
     private final XmlMarshaling xmlMarshaling = new XmlMarshaling(ObjectFactory.class);
 
-    private void injectTracking(VAST vast, Map<String, Object> data) {
-        @SuppressWarnings("unchecked")
-        List<String> errorUrls = (List<String>) data.get(VASTTag.UrlErrors.getTagName());
+    private void doInjectTrackers(VAST vast, VastTrackers trackers) {
+
+        List<String> errorUrls = trackers.getErrorUrls();
         String errorUrl = CollectionUtils.isNotEmpty(errorUrls) ? errorUrls.get(0) : null;
 
-        List<String> imprUrls = get(VASTTag.UrlImpressions.getTagName(), data);
-        Map<String, List<String>> trackingUrls = get(VASTTag.UrlsTrackingLinear.getTagName(), data);
-        Map<String, List<String>> trackingUrlsNonLinear = get(VASTTag.UrlsTrackingNonLinear.getTagName(), data);
+        List<String> imprUrls = trackers.getImpressionUrls();
+        Map<String, List<String>> trackingUrls = trackers.getLinearTrackingUrls();
+        Map<String, List<String>> trackingUrlsNonLinear = trackers.getNonLinearTrackingUrls();
 
         List<Ad> ads = vast.getAd();
 
@@ -68,7 +68,7 @@ public final class Vast2Helper extends BaseVastHelper {
                     for (VAST.Ad.Wrapper.Creatives.Creative creative : creatives.getCreative()) {
                         // LINEAR
                         if (creative.getLinear() != null) {
-                            List<String> clickUrls = get(VASTTag.UrlClicks.getTagName(), data);
+                            List<String> clickUrls = trackers.getLinearClickUrls();
 
                             // CLICK TRACKING
                             if (CollectionUtils.isNotEmpty(clickUrls)) {
@@ -175,21 +175,21 @@ public final class Vast2Helper extends BaseVastHelper {
                     for (VAST.Ad.InLine.Creatives.Creative creative : creativeAds) {
                         // LINEAR
                         if (creative.getLinear() != null) {
-                            List<String> clickUrls = get(VASTTag.UrlClicks.getTagName(), data);
-
-                            VideoClicksType videoClicks = creative.getLinear().getVideoClicks();
-                            if (videoClicks == null) {
-                                videoClicks = new VideoClicksType();
-                                creative.getLinear().setVideoClicks(videoClicks);
-                            }
+                            List<String> clickUrls = trackers.getLinearClickUrls();
 
                             // CLICK TRACKING
                             if (CollectionUtils.isNotEmpty(clickUrls)) {
+                                VideoClicksType videoClicks = creative.getLinear().getVideoClicks();
+                                if (videoClicks == null) {
+                                    videoClicks = new VideoClicksType();
+                                    creative.getLinear().setVideoClicks(videoClicks);
+                                }
+
+                                List<VideoClicksType.ClickTracking> trackingsList = videoClicks.getClickTracking();
                                 for (String clickUrl : clickUrls) {
                                     if (StringUtils.isEmpty(clickUrl)) {
                                         continue;
                                     }
-                                    List<VideoClicksType.ClickTracking> trackingsList = videoClicks.getClickTracking();
                                     VideoClicksType.ClickTracking tracking = new VideoClicksType.ClickTracking();
                                     tracking.setValue(clickUrl);
                                     trackingsList.add(tracking);
@@ -247,16 +247,16 @@ public final class Vast2Helper extends BaseVastHelper {
     }
 
     @Override
-    protected String injectTracking(String vastStr, Map<String, Object> vastdata) throws XmlMarshalingException {
-        VAST vast = unmarshal(vastStr, xmlMarshaling, VAST.class);
+    protected String injectTracking(String vastStr, VastTrackers trackers) throws XmlMarshalingException {
+        VAST vast = unmarshal(vastStr);
         if (vast == null) {
             return null;
         }
 
-        injectTracking(vast, vastdata);
+        doInjectTrackers(vast, trackers);
 
-        vast.setVersion(getVastVersion().versionStr);
-        return marshal(vast, xmlMarshaling);
+        vast.setVersion(getVastVersion().string);
+        return marshal(vast);
     }
 
     @Override
