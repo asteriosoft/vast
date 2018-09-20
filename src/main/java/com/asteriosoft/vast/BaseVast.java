@@ -6,7 +6,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-abstract class VastHelper<V> {
+abstract class BaseVast<V> {
 
     private static final char[] XML_NS = " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"\"".toCharArray();
     private static final char[] EXTENSIONS_START = "<Extensions>".toCharArray();

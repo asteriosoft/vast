@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-final class Vast2 extends VastHelper<VAST> {
+final class Vast2 extends BaseVast<VAST> {
 
     private final XmlMarshaling xmlMarshaling = new XmlMarshaling(ObjectFactory.class);
 

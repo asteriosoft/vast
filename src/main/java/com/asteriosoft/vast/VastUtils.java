@@ -88,8 +88,8 @@ public final class VastUtils {
         }
     }
 
-    static VastHelper<?> getVastHelper(String vast) {
-        VastHelper<?> helper = null;
+    static BaseVast<?> getVastHelper(String vast) {
+        BaseVast<?> helper = null;
         try {
             switch (parseVastVersion(vast)) {
                 case VAST2:
@@ -114,7 +114,7 @@ public final class VastUtils {
     	//
         try {
             vastStr = cutVast(vastStr);
-            VastHelper<?> vastHelper = getVastHelper(vastStr);
+            BaseVast<?> vastHelper = getVastHelper(vastStr);
             return vastHelper == null
                     ? StringUtils.EMPTY
                     : vastHelper.addVastTrackingUrls(vastStr, trackers);
@@ -142,7 +142,7 @@ public final class VastUtils {
 	public static Object parseVast(String vast) throws VastUtilsException {
 	    try {
 	        vast = cutVast(vast);
-	        VastHelper<?> vastHelper = getVastHelper(vast);
+	        BaseVast<?> vastHelper = getVastHelper(vast);
 	        return vastHelper == null
 	                ? null
 	                : vastHelper.unmarshal(vast);
@@ -150,205 +150,4 @@ public final class VastUtils {
 	        throw new VastUtilsException(err);
 	    }
 	}
-
-	public static VastWrapperInfo getWrapperInfo(Object vast) {
-	    if (vast instanceof com.asteriosoft.vast.v2.VAST) {
-	        List<com.asteriosoft.vast.v2.VAST.Ad> adList = ((com.asteriosoft.vast.v2.VAST) vast).getAd();
-	        if (CollectionUtils.isEmpty(adList)) {
-	            return VastWrapperInfo.NO_ADS;
-	        }
-	        if (adList.size() > 1) {
-	            return VastWrapperInfo.MULTIPLE_ADS;
-	        }
-	        com.asteriosoft.vast.v2.VAST.Ad vast2Ad = adList.get(0);
-	        VAST.Ad.Wrapper wrapper = vast2Ad.getWrapper();
-	        if (wrapper == null) {
-	            return VastWrapperInfo.NOT_WRAPPER;
-	        }
-	        //
-	        String vastAdTagURI = StringUtils.trimToEmpty(wrapper.getVASTAdTagURI());
-	        if (isUrl(vastAdTagURI)) {
-	            List<String> impressions = wrapper.getImpression();
-	            List<String> errors = StringUtils.isBlank(wrapper.getError()) ? Collections.emptyList() : Collections.singletonList(wrapper.getError());
-	            Map<String, List<String>> linearTrackingUrls = null;
-	            Map<String, List<String>> nonLinearTrackingUrls = null;
-	            List<String> linearClickUrls = null;
-	            
-	            if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
-	            	for(VAST.Ad.Wrapper.Creatives.Creative cr: wrapper.getCreatives().getCreative()) {
-	            		if (cr.getLinear() != null) {
-	            			if (cr.getLinear().getTrackingEvents() != null && cr.getLinear().getTrackingEvents() != null) {
-			        			List<TrackingEventsType.Tracking> trackings = cr.getLinear().getTrackingEvents().getTracking();
-			        			if (CollectionUtils.isNotEmpty(trackings)) {
-			        				linearTrackingUrls = new HashMap<>(trackings.size());
-			        				for (TrackingEventsType.Tracking tracking : trackings) {
-			        					linearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> {return new ArrayList<String>(1);}).add(tracking.getValue());
-									}
-			        			}
-	            			}
-	            			if (cr.getLinear().getVideoClicks() != null) {
-	            				List<VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking> clickTrackings = cr.getLinear().getVideoClicks().getClickTracking();
-	            				if (CollectionUtils.isNotEmpty(clickTrackings)) {
-	            					linearClickUrls = new ArrayList<>(clickTrackings.size());
-	            					for (VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking clickTracking : clickTrackings) {
-	            						linearClickUrls.add(clickTracking.getValue());
-									}
-	            				}
-	            			}
-	            		}
-	            		if (cr.getNonLinearAds() != null && cr.getNonLinearAds().getTrackingEvents() != null) {
-	            			List<TrackingEventsType.Tracking> trackings = cr.getNonLinearAds().getTrackingEvents().getTracking();
-	            			if (CollectionUtils.isNotEmpty(trackings)) {
-	            				nonLinearTrackingUrls = new HashMap<>();
-		            			for (TrackingEventsType.Tracking tracking : trackings) {
-		            				nonLinearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> {return new ArrayList<String>(1);}).add(tracking.getValue());
-		            			}
-	            			}
-	            		}
-	            	}
-	            }
-	
-	            return new VastWrapperInfo(vastAdTagURI, new VastTrackers(impressions, errors, linearTrackingUrls, linearClickUrls, nonLinearTrackingUrls));
-	        } else {
-	            return VastWrapperInfo.EMPTY_VASTTAGURI;
-	        }
-	    } else if (vast instanceof com.asteriosoft.vast.v3.VAST) {
-	        List<com.asteriosoft.vast.v3.VAST.Ad> adList = ((com.asteriosoft.vast.v3.VAST) vast).getAd();
-	        if (CollectionUtils.isEmpty(adList)) {
-	            return VastWrapperInfo.NO_ADS;
-	        }
-	        if (adList.size() > 1) {
-	            return VastWrapperInfo.MULTIPLE_ADS;
-	        }
-	        com.asteriosoft.vast.v3.VAST.Ad vast3Ad = adList.get(0);
-	        com.asteriosoft.vast.v3.VAST.Ad.Wrapper wrapper = vast3Ad.getWrapper();
-	        if (wrapper == null) {
-	            return VastWrapperInfo.NOT_WRAPPER;
-	        }
-	        //
-	        String vastAdTagURI = StringUtils.trimToEmpty(wrapper.getVASTAdTagURI());
-	        if (isUrl(vastAdTagURI)) {
-	            List<String> impressions = wrapper.getImpression();
-	            List<String> errors = StringUtils.isBlank(wrapper.getError()) ? Collections.emptyList() : Collections.singletonList(wrapper.getError());
-	            Map<String, List<String>> linearTrackingUrls = null;
-	            Map<String, List<String>> nonLinearTrackingUrls = null;
-	            List<String> linearClickUrls = null;
-	            
-	            if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
-	            	for(com.asteriosoft.vast.v3.VAST.Ad.Wrapper.Creatives.Creative cr: wrapper.getCreatives().getCreative()) {
-	            		if (cr.getLinear() != null) {
-	            			if (cr.getLinear().getTrackingEvents() != null && cr.getLinear().getTrackingEvents() != null) {
-			        			List<com.asteriosoft.vast.v3.TrackingEventsType.Tracking> trackings = cr.getLinear().getTrackingEvents().getTracking();
-			        			if (CollectionUtils.isNotEmpty(trackings)) {
-			        				linearTrackingUrls = new HashMap<>(trackings.size());
-			        				for (com.asteriosoft.vast.v3.TrackingEventsType.Tracking tracking : trackings) {
-			        					linearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> {return new ArrayList<String>(1);}).add(tracking.getValue());
-									}
-			        			}
-	            			}
-	            			if (cr.getLinear().getVideoClicks() != null) {
-	            				List<com.asteriosoft.vast.v3.VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking> clickTrackings = cr.getLinear().getVideoClicks().getClickTracking();
-	            				if (CollectionUtils.isNotEmpty(clickTrackings)) {
-	            					linearClickUrls = new ArrayList<>(clickTrackings.size());
-	            					for (com.asteriosoft.vast.v3.VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking clickTracking : clickTrackings) {
-	            						linearClickUrls.add(clickTracking.getValue());
-									}
-	            				}
-	            			}
-	            		}
-	            		if (cr.getNonLinearAds() != null && cr.getNonLinearAds().getTrackingEvents() != null) {
-	            			List<com.asteriosoft.vast.v3.TrackingEventsType.Tracking> trackings = cr.getNonLinearAds().getTrackingEvents().getTracking();
-	            			if (CollectionUtils.isNotEmpty(trackings)) {
-	            				nonLinearTrackingUrls = new HashMap<>();
-		            			for (com.asteriosoft.vast.v3.TrackingEventsType.Tracking tracking : trackings) {
-		            				nonLinearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> {return new ArrayList<String>(1);}).add(tracking.getValue());
-		            			}
-	            			}
-	            		}	            		
-	            	}
-	            }
-	
-	            return new VastWrapperInfo(vastAdTagURI, new VastTrackers(impressions, errors, linearTrackingUrls, linearClickUrls, nonLinearTrackingUrls));
-	        } else {
-	            return VastWrapperInfo.EMPTY_VASTTAGURI;
-	        }
-	    } else if (vast instanceof com.asteriosoft.vast.v4.VAST) {
-	        List<com.asteriosoft.vast.v4.VAST.Ad> adList = ((com.asteriosoft.vast.v4.VAST) vast).getAd();
-	        if (CollectionUtils.isEmpty(adList)) {
-	            return VastWrapperInfo.NO_ADS;
-	        }
-	        if (adList.size() > 1) {
-	            return VastWrapperInfo.MULTIPLE_ADS;
-	        }
-	        com.asteriosoft.vast.v4.VAST.Ad vast4Ad = adList.get(0);
-	        com.asteriosoft.vast.v4.VAST.Ad.Wrapper wrapper = vast4Ad.getWrapper();
-	        if (wrapper == null) {
-	            return VastWrapperInfo.NOT_WRAPPER;
-	        }
-	        //
-	        String vastAdTagURI = StringUtils.trimToEmpty(wrapper.getVASTAdTagURI());
-	        if (isUrl(vastAdTagURI)) {
-	
-	            List<String> impressions = null;
-	            List<AnyURIType> anyURITypes = wrapper.getImpression();
-	            if (CollectionUtils.isNotEmpty(anyURITypes)) {
-	                impressions = new ArrayList<>(anyURITypes.size());
-	                for (AnyURIType anyURIType : anyURITypes) {
-	                    String value = anyURIType.getValue();
-	                    if (StringUtils.isNotBlank(value)) {
-	                        impressions.add(value);
-	                    }
-	                }
-	            }
-	
-	            Map<String, List<String>> linearTrackingUrls = null;
-	            Map<String, List<String>> nonLinearTrackingUrls = null;	            
-	            List<String> linearClickUrls = null;
-	            
-	            if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
-	            	for(com.asteriosoft.vast.v4.VAST.Ad.Wrapper.Creatives.Creative cr: wrapper.getCreatives().getCreative()) {
-	            		if (cr.getLinear() != null) {
-	            			if (cr.getLinear().getTrackingEvents() != null && cr.getLinear().getTrackingEvents() != null) {
-			        			List<TrackingEventsLinearType.Tracking> trackings = cr.getLinear().getTrackingEvents().getTracking();
-			        			if (CollectionUtils.isNotEmpty(trackings)) {
-			        				linearTrackingUrls = new HashMap<>(trackings.size());
-			        				for (TrackingEventsLinearType.Tracking tracking : trackings) {
-			        					linearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> {return new ArrayList<String>(1);}).add(tracking.getValue());
-									}
-			        			}
-	            			}
-	            			if (cr.getLinear().getVideoClicks() != null) {
-	            				List<AnyURIType> clickTrackings = cr.getLinear().getVideoClicks().getClickTracking();
-	            				if (CollectionUtils.isNotEmpty(clickTrackings)) {
-	            					linearClickUrls = new ArrayList<>(clickTrackings.size());
-	            					for (AnyURIType clickTracking : clickTrackings) {
-	            						linearClickUrls.add(clickTracking.getValue());
-									}
-	            				}
-	            			}
-	            		}
-	            		if (cr.getNonLinearAds() != null && cr.getNonLinearAds().getTrackingEvents() != null) {
-	            			List<TrackingEventsNonLinearType.Tracking> trackings = cr.getNonLinearAds().getTrackingEvents().getTracking();
-	            			if (CollectionUtils.isNotEmpty(trackings)) {
-	            				nonLinearTrackingUrls = new HashMap<>();
-		            			for (TrackingEventsNonLinearType.Tracking tracking : trackings) {
-		            				nonLinearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> {return new ArrayList<String>(1);}).add(tracking.getValue());
-		            			}
-	            			}
-	            		}	            		
-	            	}
-	            }
-	
-	            return new VastWrapperInfo(vastAdTagURI, new VastTrackers(impressions, wrapper.getError(), linearTrackingUrls, linearClickUrls, nonLinearTrackingUrls));
-	        } else {
-	            return VastWrapperInfo.EMPTY_VASTTAGURI;
-	        }
-	    } else {
-	        return VastWrapperInfo.UNSUPPORTED_VERSION;
-	    }
-	}
-
-	private static boolean isUrl(String vastAdTagURI) {
-	    return StringUtils.startsWithIgnoreCase(vastAdTagURI, "http");
-	}    
 }

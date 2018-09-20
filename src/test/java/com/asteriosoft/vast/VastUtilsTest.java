@@ -52,16 +52,28 @@ public class VastUtilsTest {
 	
 	@Test
 	public void test() throws Exception {
-		Object vast = VastUtils.parseVast(WRAPPER_LINEAR);
+		String wrapper = WRAPPER_LINEAR;
+		
+		VastVersion vastVersion = VastUtils.parseVastVersion(wrapper);
+		Assert.assertEquals(VastVersion.VAST2, vastVersion);
+		
+		Object vast = VastUtils.parseVast(wrapper);
 		Assert.assertNotNull(vast);
+
+		wrapper = WRAPPER_LINEAR.replaceAll("2\\.0", "3.0");
+
+		vastVersion = VastUtils.parseVastVersion(wrapper);
+		Assert.assertEquals(VastVersion.VAST3, vastVersion);
 		
-		VastWrapperInfo info = VastUtils.getWrapperInfo(vast);
-		Assert.assertNull(info.getNonUnwrappableReason());
+		vast = VastUtils.parseVast(wrapper);
+		Assert.assertNotNull(vast);
+
+		wrapper = WRAPPER_LINEAR.replaceAll("2\\.0", "4.0");
+
+		vastVersion = VastUtils.parseVastVersion(wrapper);
+		Assert.assertEquals(VastVersion.VAST4, vastVersion);
 		
-		String str = VastUtils.printVast(vast);
-		System.out.println(str);
-		str = VastUtils.addVastTrackingUrls(str, info.getTrackers());
-		System.out.println(info);
-		System.out.println(str);
+		vast = VastUtils.parseVast(wrapper);
+		Assert.assertNotNull(vast);		
 	}
 }
