@@ -161,22 +161,21 @@ final class Vast4 extends BaseVast<VAST> {
 
                 // impression
                 if (CollectionUtils.isNotEmpty(imprUrls)) {
-                    List<AnyURIType> impressions = wrapper.getImpression();
-                    if (impressions == null) {
-                        impressions = Collections.emptyList();
+                	Set<String> newImprs = new LinkedHashSet<>();
+                    if (wrapper.getImpression() != null) {
+                        for(AnyURIType t: wrapper.getImpression()) {
+                        	if (StringUtils.isNotBlank(t.getValue())) {
+                        		newImprs.add(t.getValue());
+                        	}
+                        }
                     }
-                    if (!impressions.isEmpty()) {
-                        impressions.removeIf(t -> StringUtils.isBlank(t.getValue()));
-                    }
-                    wrapper.setImpression(new ArrayList<>(impressions.size() + imprUrls.size()));
-                    for (String imprUrl : imprUrls) {
+                    List<AnyURIType> newList = new ArrayList<>(newImprs.size());
+                	for (String string : newImprs) {
                         AnyURIType impr = new AnyURIType();
-                        impr.setValue(imprUrl);
-                        wrapper.getImpression().add(impr);
-                    }
-                    if (!impressions.isEmpty()) {
-                        wrapper.getImpression().addAll(impressions);
-                    }
+                        impr.setValue(string);
+                        newList.add(impr);
+					}
+                    wrapper.setImpression(newList);
                 }
 
                 if (!trackingUrls.isEmpty() || !clickUrls.isEmpty() || !trackingUrlsNonLinear.isEmpty() || !clickUrlsNonLinear.isEmpty()) {

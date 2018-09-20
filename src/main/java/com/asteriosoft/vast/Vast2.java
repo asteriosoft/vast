@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -137,18 +138,13 @@ final class Vast2 extends BaseVast<VAST> {
 
                 // impression
                 if (CollectionUtils.isNotEmpty(imprUrls)) {
-                    List<String> impressions = wrapper.getImpression();
-                    if (impressions == null) {
-                        impressions = Collections.emptyList();
+                    Set<String> newImprs = new LinkedHashSet<>();
+                	
+                    if (wrapper.getImpression() != null) {
+                        newImprs.addAll(wrapper.getImpression());
                     }
-                    if (!impressions.isEmpty()) {
-                        impressions.removeIf(StringUtils::isBlank);
-                    }
-                    wrapper.setImpression(new ArrayList<>(impressions.size() + imprUrls.size()));
-                    wrapper.getImpression().addAll(imprUrls);
-                    if (!impressions.isEmpty()) {
-                        wrapper.getImpression().addAll(impressions);
-                    }
+                    newImprs.addAll(imprUrls);
+                    wrapper.setImpression(new ArrayList<>(newImprs));
                 }
 
                 if (!trackingUrls.isEmpty() || !clickUrls.isEmpty() || !trackingUrlsNonLinear.isEmpty() || !clickUrlsNonLinear.isEmpty()) {
