@@ -17,19 +17,127 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 final class Vast3 extends BaseVast<VAST> {
 
     private final XmlMarshaling xmlMarshaling = new XmlMarshaling(ObjectFactory.class);
 
+    private InjectTrackersResult injectWrapperTrackers(boolean createMissingElements, VAST.Ad.Wrapper.Creatives creatives, 
+    		Set<String> clickUrls, Map<String, Set<String>> trackingUrls, Set<String> clickUrlsNonLinear, Map<String, Set<String>> trackingUrlsNonLinear) {
+    	boolean linearClickUrlsAdded = false;
+    	boolean linearTracksAdded = false;
+    	boolean nonLinearClickUrlsAdded = false;    	
+    	boolean nonLinearTracksAdded = false;
+    	
+        for (VAST.Ad.Wrapper.Creatives.Creative creative : creatives.getCreative()) {
+            // LINEAR
+            if (creative.getLinear() != null) {
+
+                // CLICK TRACKING
+                if (!linearClickUrlsAdded && CollectionUtils.isNotEmpty(clickUrls)) {
+                    VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks videoClicks = creative.getLinear().getVideoClicks();
+                    if (videoClicks == null && createMissingElements) {
+                        videoClicks = new VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks();
+                        creative.getLinear().setVideoClicks(videoClicks);
+                    }
+                    if (videoClicks != null) { 
+	                    for (String clickUrl : clickUrls) {
+	                        List<VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking> trackingsList = videoClicks.getClickTracking();
+	                        VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking tracking = new VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking();
+	                        tracking.setValue(clickUrl);
+	                        trackingsList.add(tracking);
+	                    }
+	                    linearClickUrlsAdded = true;	                    
+                    }
+                }
+
+                // EVENTS
+                if (!linearTracksAdded && MapUtils.isNotEmpty(trackingUrls)) {
+                    TrackingEventsType eventsType = creative.getLinear().getTrackingEvents();
+                    if (eventsType == null && createMissingElements) {
+                        creative.getLinear().setTrackingEvents(eventsType = new TrackingEventsType());
+                    }
+                    if (eventsType != null) {
+	                    List<TrackingEventsType.Tracking> trackingList = eventsType.getTracking();
+	                    for (Map.Entry<String, Set<String>> stringListEntry : trackingUrls.entrySet()) {
+	                        for (String url : stringListEntry.getValue()) {
+	                            if (StringUtils.isEmpty(url)) {
+	                                continue;
+	                            }
+	                            Tracking tracking = new Tracking();
+	                            tracking.setEvent(stringListEntry.getKey());
+	                            tracking.setValue(url);
+	                            trackingList.add(tracking);
+	                        }
+	                    }
+	                    linearTracksAdded = true;
+                    }
+                }
+            }
+
+            // NON-LINEAR
+            if (creative.getNonLinearAds() != null) {
+                // CLICK
+                if (CollectionUtils.isNotEmpty(clickUrlsNonLinear)) {
+                    List<NonLinearWrapperType> nonLinearTypes = creative.getNonLinearAds().getNonLinear();
+                    if (CollectionUtils.isEmpty(nonLinearTypes) && createMissingElements) {
+                    	nonLinearTypes = new ArrayList<>(1);
+                    	nonLinearTypes.add(new NonLinearWrapperType());
+                    	creative.getNonLinearAds().setNonLinear(nonLinearTypes);                    	
+                    }
+                    if (CollectionUtils.isNotEmpty(nonLinearTypes)) {
+                        for (NonLinearWrapperType nonLinearWrapperType : nonLinearTypes) {
+                            for (String clickUrl : clickUrlsNonLinear) {
+                                if (StringUtils.isEmpty(clickUrl)) {
+                                    continue;
+                                }
+                                nonLinearWrapperType.getNonLinearClickTracking().add(clickUrl);
+                            }
+                        }
+                    }
+                    nonLinearClickUrlsAdded = true;
+                }
+
+                // EVENTS
+                if (!nonLinearTracksAdded && MapUtils.isNotEmpty(trackingUrlsNonLinear)) {
+                    TrackingEventsType eventsType = creative.getNonLinearAds().getTrackingEvents();
+                    if (eventsType == null && createMissingElements) {
+                        creative.getNonLinearAds().setTrackingEvents(eventsType = new TrackingEventsType());
+                    }
+                    if (eventsType != null) {
+	                    List<TrackingEventsType.Tracking> trackingList = eventsType.getTracking();
+	                    for (Map.Entry<String, Set<String>> stringListEntry : trackingUrlsNonLinear.entrySet()) {
+	                        for (String url : stringListEntry.getValue()) {
+	                            if (StringUtils.isEmpty(url)) {
+	                                continue;
+	                            }
+	                            Tracking tracking = new Tracking();
+	                            tracking.setEvent(stringListEntry.getKey());
+	                            tracking.setValue(url);
+	                            trackingList.add(tracking);
+	                        }
+	                    }
+	                    nonLinearTracksAdded = true;	                    
+                    }
+                }
+            }
+        }    	
+        return new InjectTrackersResult(linearTracksAdded, linearClickUrlsAdded, nonLinearTracksAdded, nonLinearClickUrlsAdded);
+    }
+    		
     private void doInjectTrackers(VAST vast, VastTrackers trackers) {
 
         List<String> errorUrls = trackers.getErrorUrls();
         String errorUrl = CollectionUtils.isNotEmpty(errorUrls) ? errorUrls.get(0) : null;
 
         List<String> imprUrls = trackers.getImpressionUrls();
-        Map<String, List<String>> trackingUrls = trackers.getLinearTrackingUrls();
-        Map<String, List<String>> trackingUrlsNonLinear = trackers.getNonLinearTrackingUrls();
+        
+        Map<String, Set<String>> trackingUrls = trackers.getLinearTrackingUrls();
+        Set<String> clickUrls = trackers.getLinearClickUrls();
+        
+        Map<String, Set<String>> trackingUrlsNonLinear = trackers.getNonLinearTrackingUrls();
+        Set<String> clickUrlsNonLinear = trackers.getNonLinearClickUrls();
 
         List<Ad> ads = vast.getAd();
 
@@ -65,88 +173,29 @@ final class Vast3 extends BaseVast<VAST> {
                     }
                 }
 
+                if (!trackingUrls.isEmpty() || !clickUrls.isEmpty() || !trackingUrlsNonLinear.isEmpty() || !clickUrlsNonLinear.isEmpty()) {
                 VAST.Ad.Wrapper.Creatives creatives = wrapper.getCreatives();
-                if (creatives != null) {
-                    for (VAST.Ad.Wrapper.Creatives.Creative creative : creatives.getCreative()) {
-                        // LINEAR
-                        if (creative.getLinear() != null) {
-                            List<String> clickUrls = trackers.getLinearClickUrls();
-
-                            // CLICK TRACKING
-                            if (CollectionUtils.isNotEmpty(clickUrls)) {
-                                VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks videoClicks = creative.getLinear().getVideoClicks();
-                                if (videoClicks == null) {
-                                    videoClicks = new VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks();
-                                    creative.getLinear().setVideoClicks(videoClicks);
-                                }
-                                for (String clickUrl : clickUrls) {
-                                    List<VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking> trackingsList = videoClicks.getClickTracking();
-                                    VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking tracking = new VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking();
-                                    tracking.setValue(clickUrl);
-                                    trackingsList.add(tracking);
-                                }
-                            }
-
-                            // EVENTS
-                            if (MapUtils.isNotEmpty(trackingUrls)) {
-                                TrackingEventsType eventsType = creative.getLinear().getTrackingEvents();
-                                if (eventsType == null) {
-                                    creative.getLinear().setTrackingEvents(eventsType = new TrackingEventsType());
-                                }
-                                List<TrackingEventsType.Tracking> trackingList = eventsType.getTracking();
-                                for (Map.Entry<String, List<String>> stringListEntry : trackingUrls.entrySet()) {
-                                    for (String url : stringListEntry.getValue()) {
-                                        if (StringUtils.isEmpty(url)) {
-                                            continue;
-                                        }
-                                        Tracking tracking = new Tracking();
-                                        tracking.setEvent(stringListEntry.getKey());
-                                        tracking.setValue(url);
-                                        trackingList.add(tracking);
-                                    }
-                                }
-                            }
-                        }
-
-                        // NON-LINEAR
-                        if (creative.getNonLinearAds() != null) {
-                            List<String> clickUrls = trackers.getLinearClickUrls();
-
-                            // CLICK
-                            if (CollectionUtils.isNotEmpty(clickUrls)) {
-                                List<NonLinearWrapperType> nonLinearTypes = creative.getNonLinearAds().getNonLinear();
-                                if (CollectionUtils.isNotEmpty(nonLinearTypes)) {
-                                    for (NonLinearWrapperType nonLinearWrapperType : nonLinearTypes) {
-                                        for (String clickUrl : clickUrls) {
-                                            if (StringUtils.isEmpty(clickUrl)) {
-                                                continue;
-                                            }
-                                            nonLinearWrapperType.getNonLinearClickTracking().add(clickUrl);
-                                        }
-                                    }
-                                }
-                            }
-
-                            // EVENTS
-                            if (MapUtils.isNotEmpty(trackingUrlsNonLinear)) {
-                                TrackingEventsType eventsType = creative.getNonLinearAds().getTrackingEvents();
-                                if (eventsType == null) {
-                                    creative.getNonLinearAds().setTrackingEvents(eventsType = new TrackingEventsType());
-                                }
-                                List<TrackingEventsType.Tracking> trackingList = eventsType.getTracking();
-                                for (Map.Entry<String, List<String>> stringListEntry : trackingUrlsNonLinear.entrySet()) {
-                                    for (String url : stringListEntry.getValue()) {
-                                        if (StringUtils.isEmpty(url)) {
-                                            continue;
-                                        }
-                                        Tracking tracking = new Tracking();
-                                        tracking.setEvent(stringListEntry.getKey());
-                                        tracking.setValue(url);
-                                        trackingList.add(tracking);
-                                    }
-                                }
-                            }
-                        }
+                    if (creatives == null) {
+                    	creatives = new VAST.Ad.Wrapper.Creatives();
+                    	wrapper.setCreatives(creatives);
+                    	injectWrapperTrackers(true, creatives, clickUrls, trackingUrls, clickUrlsNonLinear, trackingUrlsNonLinear);
+                    } else {
+                    	InjectTrackersResult result = injectWrapperTrackers(false, creatives, clickUrls, trackingUrls, clickUrlsNonLinear, trackingUrlsNonLinear);
+                    	if (result.linearClickUrlsAdded) {
+                    		clickUrls = Collections.emptySet();
+                    	}
+                    	if (result.linearTracksAdded) {
+                    		trackingUrls = Collections.emptyMap();
+                    	}
+                    	if (result.nonLinearClickUrlsAdded) {
+                    		clickUrlsNonLinear = Collections.emptySet();
+                    	}
+                    	if (result.nonLinearTracksAdded) {
+                    		trackingUrlsNonLinear = Collections.emptyMap();
+                    	}
+                    	if (!trackingUrls.isEmpty() || !clickUrls.isEmpty() || !trackingUrlsNonLinear.isEmpty()) {
+                    		injectWrapperTrackers(true, creatives, clickUrls, trackingUrls, clickUrlsNonLinear, trackingUrlsNonLinear);
+                    	}
                     }
                 }
             }
@@ -193,7 +242,6 @@ final class Vast3 extends BaseVast<VAST> {
                     for (VAST.Ad.InLine.Creatives.Creative creative : creativeAds) {
                         // LINEAR
                         if (creative.getLinear() != null) {
-                            List<String> clickUrls = trackers.getLinearClickUrls();
 
                             // CLICK TRACKING
                             if (CollectionUtils.isNotEmpty(clickUrls)) {
@@ -221,7 +269,7 @@ final class Vast3 extends BaseVast<VAST> {
                                     creative.getLinear().setTrackingEvents(eventsType = new TrackingEventsType());
                                 }
                                 List<TrackingEventsType.Tracking> trackingList = eventsType.getTracking();
-                                for (Map.Entry<String, List<String>> stringListEntry : trackingUrls.entrySet()) {
+                                for (Map.Entry<String, Set<String>> stringListEntry : trackingUrls.entrySet()) {
                                     for (String url : stringListEntry.getValue()) {
                                         if (StringUtils.isEmpty(url)) {
                                             continue;
@@ -238,14 +286,12 @@ final class Vast3 extends BaseVast<VAST> {
                         // NON-LINEAR
                         if (creative.getNonLinearAds() != null) {
 
-                            List<String> clickUrls = trackers.getLinearClickUrls();
-
                             // CLICK TRACKING
-                            if (CollectionUtils.isNotEmpty(clickUrls)) {
+                            if (CollectionUtils.isNotEmpty(clickUrlsNonLinear)) {
                                 List<NonLinearType> nonLinearTypes = creative.getNonLinearAds().getNonLinear();
                                 if (CollectionUtils.isNotEmpty(nonLinearTypes)) {
                                     for (NonLinearType nonLinearType : nonLinearTypes) {
-                                        nonLinearType.getNonLinearClickTracking().addAll(clickUrls);
+                                        nonLinearType.getNonLinearClickTracking().addAll(clickUrlsNonLinear);
                                     }
                                 }
                             }
@@ -257,7 +303,7 @@ final class Vast3 extends BaseVast<VAST> {
                                     creative.getNonLinearAds().setTrackingEvents(eventsType = new TrackingEventsType());
                                 }
                                 List<TrackingEventsType.Tracking> trackingList = eventsType.getTracking();
-                                for (Map.Entry<String, List<String>> stringListEntry : trackingUrlsNonLinear.entrySet()) {
+                                for (Map.Entry<String, Set<String>> stringListEntry : trackingUrlsNonLinear.entrySet()) {
                                     for (String url : stringListEntry.getValue()) {
                                         if (StringUtils.isEmpty(url)) {
                                             continue;

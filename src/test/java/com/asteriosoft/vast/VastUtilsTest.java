@@ -1,5 +1,9 @@
 package com.asteriosoft.vast;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -43,37 +47,67 @@ public class VastUtilsTest {
 			"<NonLinearAds>\r\n" + 
 			"<TrackingEvents> </TrackingEvents>\r\n" + 
 			"</NonLinearAds>\r\n" + 
-			"</Creative>\r\n" + 
+			"</Creative>\r\n" +
+			"                <Creative>\r\n" + 
+			"                    <NonLinearAds>\r\n" + 
+			"                        <TrackingEvents>\r\n" + 
+			"                            <Tracking event=\"expand\"><![CDATA[http://example.com/expand]]></Tracking>\r\n" + 
+			"                        </TrackingEvents>\r\n" + 
+			"                        <NonLinear>\r\n" + 
+			"                            <NonLinearClickTracking><![CDATA[http://example.com/click]]></NonLinearClickTracking>\r\n" + 
+			"                        </NonLinear>\r\n" + 
+			"                    </NonLinearAds>\r\n" + 
+			"                </Creative>\r\n" +			
 			"</Creatives>\r\n" + 
 			"</Wrapper>\r\n" + 
 			"</Ad>\r\n" + 
 			"</VAST>";
 	
-	
 	@Test
-	public void test() throws Exception {
+	public void testWrapper() throws Exception {
 		String wrapper = WRAPPER_LINEAR;
+		testWrapper(wrapper, VastVersion.VAST2);
 		
+		wrapper = WRAPPER_LINEAR.replaceAll("2\\.0", "3.0");
+		testWrapper(wrapper, VastVersion.VAST3);
+
+		wrapper = WRAPPER_LINEAR.replaceAll("2\\.0", "4.0");
+		testWrapper(wrapper, VastVersion.VAST4);
+	}
+	
+	private void testWrapper(String wrapper, VastVersion version) throws Exception {
 		VastVersion vastVersion = VastUtils.parseVastVersion(wrapper);
-		Assert.assertEquals(VastVersion.VAST2, vastVersion);
+		Assert.assertEquals(version, vastVersion);
 		
 		Object vast = VastUtils.parseVast(wrapper);
 		Assert.assertNotNull(vast);
-
-		wrapper = WRAPPER_LINEAR.replaceAll("2\\.0", "3.0");
-
-		vastVersion = VastUtils.parseVastVersion(wrapper);
-		Assert.assertEquals(VastVersion.VAST3, vastVersion);
 		
-		vast = VastUtils.parseVast(wrapper);
-		Assert.assertNotNull(vast);
-
-		wrapper = WRAPPER_LINEAR.replaceAll("2\\.0", "4.0");
-
-		vastVersion = VastUtils.parseVastVersion(wrapper);
-		Assert.assertEquals(VastVersion.VAST4, vastVersion);
+		VastTrackers trackers = VastUtils.getWrapperTrackers(vast);
+		Assert.assertEquals(1, trackers.getImpressionUrls().size());
+		Assert.assertEquals(1, trackers.getErrorUrls().size());
+		Assert.assertEquals(1, trackers.getLinearClickUrls().size());
+		Assert.assertEquals(11, trackers.getLinearTrackingUrls().size());
+		if (version == VastVersion.VAST2) {
+			Assert.assertEquals(0, trackers.getNonLinearClickUrls().size());
+		} else {
+			Assert.assertEquals(1, trackers.getNonLinearClickUrls().size());
+		}
+		Assert.assertEquals(1, trackers.getNonLinearTrackingUrls().size());
 		
-		vast = VastUtils.parseVast(wrapper);
-		Assert.assertNotNull(vast);		
-	}
+		for(String s: trackers.getImpressionUrls()) {
+			Assert.assertTrue(s.contains("impression"));
+		}
+		for(String s: trackers.getErrorUrls()) {
+			Assert.assertTrue(s.contains("error"));
+		}		
+		for(String s: trackers.getLinearClickUrls()) {
+			Assert.assertTrue(s.contains("click"));
+		}
+		for(Map.Entry<String, Set<String>> e: trackers.getLinearTrackingUrls().entrySet()) {
+			String event = e.getKey();
+			for(String s: e.getValue()) {				
+				Assert.assertTrue(s.contains(event));	
+			}
+		}		
+	}	
 }

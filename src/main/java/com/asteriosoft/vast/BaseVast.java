@@ -14,6 +14,21 @@ abstract class BaseVast<V> {
     private static final String SYMBOL_PLUS = "+";
     private static final String SYMBOL_PLUS_ENCODED = "%20";
 
+    static class InjectTrackersResult {
+		final boolean linearTracksAdded;
+    	final boolean linearClickUrlsAdded;
+    	final boolean nonLinearTracksAdded;
+    	final boolean nonLinearClickUrlsAdded;
+    	
+    	public InjectTrackersResult(boolean linearTracksAdded, boolean linearClickUrlsAdded, boolean nonLinearTracksAdded, boolean nonLinearClickUrlsAdded) {
+			super();
+			this.linearTracksAdded = linearTracksAdded;
+			this.linearClickUrlsAdded = linearClickUrlsAdded;
+			this.nonLinearTracksAdded = nonLinearTracksAdded;
+			this.nonLinearClickUrlsAdded = nonLinearClickUrlsAdded;
+		}    	
+    }
+    
     private static String replaceAmpersandChar(String xml) {
         int max = xml.length();
         StringBuilder sb = new StringBuilder(max);
