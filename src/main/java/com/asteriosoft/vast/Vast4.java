@@ -169,6 +169,7 @@ final class Vast4 extends BaseVast<VAST> {
                         	}
                         }
                     }
+                    newImprs.addAll(imprUrls);
                     List<AnyURIType> newList = new ArrayList<>(newImprs.size());
                 	for (String string : newImprs) {
                         AnyURIType impr = new AnyURIType();
