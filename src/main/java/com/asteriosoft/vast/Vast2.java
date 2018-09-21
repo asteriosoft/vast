@@ -128,7 +128,7 @@ final class Vast2 extends BaseVast<VAST> {
                 // error
                 if (StringUtils.isNotEmpty(errorUrl)) {
                     String error = wrapper.getError();
-                    if (StringUtils.isBlank(error)) {
+                    if (StringUtils.isBlank(error) || VastOption.REPLACE_ERROR_URL) {
                         error = errorUrl;
                     } else {
                         error = errorUrl + "&errorUrl=" + encodeUrl(error);
