@@ -53,16 +53,34 @@ public final class VastUtils {
         return vast;
     }
 
-    public static boolean isVast(String adCode) {
-        if (StringUtils.isEmpty(adCode)) {
+    public static boolean isVast(String str) {
+        if (StringUtils.isEmpty(str)) {
             return false;
-        } else if (adCode.contains("<VAST")) {
+        } else if (str.contains("<VAST")) {
             return true;
         }
 
         return false;
     }
 
+    public static boolean isVastAd(String str) {
+        if (StringUtils.isEmpty(str)) {
+            return false;
+        } else if (str.contains("<VAST") && str.contains("<Ad")) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isVastWrapper(String str) {
+        if (StringUtils.isEmpty(str)) {
+            return false;
+        } else if (str.contains("<VAST") && str.contains("<Wrapper")) {
+            return true;
+        }
+        return false;
+    }
+    
     public static VastVersion parseVastVersion(String vast) {
         int vastTagIndex = vast.indexOf("<VAST");
         if (vastTagIndex < 0) {
