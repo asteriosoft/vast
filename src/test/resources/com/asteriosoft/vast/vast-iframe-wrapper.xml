@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAST>
+    <Ad id="20011">
+        <Wrapper>
+            <AdSystem version="4.0">iabtechlab</AdSystem>
+            <VASTAdTagURI><![CDATA[https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%203.0%20Samples/Inline_Companion_Tag-test.xml]]></VASTAdTagURI>
+            <Error>http://example.com/error</Error>
+            <Impression>http://example.com/track/impression</Impression>
+            <Creatives>
+                <Creative id="5480" sequence="1">
+                    <Linear>
+                        <Icons>
+                            <Icon program="AdChoices" width="100" height="20" xPosition="0" yPosition="200" duration="00:00:10" offset="00:00:02">
+                                <IFrameResource><![CDATA[http://somesite.com/content.html]]></IFrameResource>
+                            </Icon>
+                        </Icons>
+                    </Linear>
+                    <CompanionAds>
+                        <Companion id="1232" width="100" height="150" assetWidth="250" assetHeight="200" expandedWidth="350" expandedHeight="250">
+                            <IFrameResource><![CDATA[http://somesite.com/content.html]]></IFrameResource>
+                            <CompanionClickThrough><![CDATA[https://iabtechlab.com]]></CompanionClickThrough>
+                        </Companion>
+                    </CompanionAds>
+                </Creative>
+            </Creatives>
+        </Wrapper>
+    </Ad>
+</VAST>

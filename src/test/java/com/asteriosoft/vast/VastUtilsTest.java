@@ -1,11 +1,18 @@
 package com.asteriosoft.vast;
 
-import java.util.List;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class VastUtilsTest {
 
@@ -74,25 +81,73 @@ public class VastUtilsTest {
 		wrapper = WRAPPER_LINEAR.replaceAll("2\\.0", "4.0");
 		testWrapper(wrapper, VastVersion.VAST4);
 	}
-	
+
+	@Test
+	public void testConvertAllResourcesToHTML()  throws Exception{
+		testResources(VastVersion.VAST2, "html");
+		testResources(VastVersion.VAST3, "html");
+		testResources(VastVersion.VAST4, "html");
+
+		testResources(VastVersion.VAST2, "iframe");
+		testResources(VastVersion.VAST3, "iframe");
+		testResources(VastVersion.VAST4, "iframe");
+
+		testResources(VastVersion.VAST2, "image");
+		testResources(VastVersion.VAST3, "image");
+		testResources(VastVersion.VAST4, "image");
+	}
+
+	public void testResources(VastVersion version, String resourceName) throws Exception {
+		String content = getFile("vast-" + resourceName + "-inline.xml");
+		VastTransformationInfo info = new VastTransformationInfo(content, version, null, (s1, s2) -> '<' + s2 + "/>" + s1);
+		String transformed = VastUtils.transform(info);
+		System.out.println("VAST " + version.version + " TRANSFORMED INLINE FOR " + resourceName);
+		System.out.println(transformed);
+
+		assertNotNull(transformed);
+		assertTrue(transformed.contains("<nonlinear-"+resourceName+"/>"));
+		assertTrue(transformed.contains("<companion-"+resourceName+"/>"));
+		if (version == VastVersion.VAST2) {
+			assertFalse(transformed.contains("<icon-"+resourceName+"/>"));
+		} else {
+			assertTrue(transformed.contains("<icon-"+resourceName+"/>"));
+		}
+		assertFalse(transformed.contains("StaticResource"));
+		assertFalse(transformed.contains("IFrameResource"));
+
+		content = getFile("vast-" + resourceName + "-wrapper.xml");
+		info = new VastTransformationInfo(content, version, null, (s1, s2) -> '<' + s2 + "/>" + s1);
+		transformed = VastUtils.transform(info);
+		System.out.println("VAST " + version.version + " TRANSFORMED WRAPPER FOR " + resourceName);
+		System.out.println(transformed);
+
+		assertNotNull(transformed);
+		assertTrue(transformed.contains("<companion-" + resourceName + "/>"));
+		if (version != VastVersion.VAST2) {
+			assertTrue(transformed.contains("<icon-" + resourceName + "/>"));
+		}
+		assertFalse(transformed.contains("StaticResource"));
+		assertFalse(transformed.contains("IFrameResource"));
+	}
+
 	private void testWrapper(String wrapper, VastVersion version) throws Exception {
 		VastVersion vastVersion = VastUtils.parseVastVersion(wrapper);
-		Assert.assertEquals(version, vastVersion);
+		assertEquals(version, vastVersion);
 		
 		Object vast = VastUtils.parseVast(wrapper);
 		Assert.assertNotNull(vast);
 		
 		VastTrackers trackers = VastUtils.getWrapperTrackers(vast);
-		Assert.assertEquals(1, trackers.getImpressionUrls().size());
-		Assert.assertEquals(1, trackers.getErrorUrls().size());
-		Assert.assertEquals(1, trackers.getLinearClickUrls().size());
-		Assert.assertEquals(11, trackers.getLinearTrackingUrls().size());
+		assertEquals(1, trackers.getImpressionUrls().size());
+		assertEquals(1, trackers.getErrorUrls().size());
+		assertEquals(1, trackers.getLinearClickUrls().size());
+		assertEquals(11, trackers.getLinearTrackingUrls().size());
 		if (version == VastVersion.VAST2) {
-			Assert.assertEquals(0, trackers.getNonLinearClickUrls().size());
+			assertEquals(0, trackers.getNonLinearClickUrls().size());
 		} else {
-			Assert.assertEquals(1, trackers.getNonLinearClickUrls().size());
+			assertEquals(1, trackers.getNonLinearClickUrls().size());
 		}
-		Assert.assertEquals(1, trackers.getNonLinearTrackingUrls().size());
+		assertEquals(1, trackers.getNonLinearTrackingUrls().size());
 		
 		for(String s: trackers.getImpressionUrls()) {
 			Assert.assertTrue(s.contains("impression"));
@@ -109,5 +164,13 @@ public class VastUtilsTest {
 				Assert.assertTrue(s.contains(event));	
 			}
 		}		
-	}	
+	}
+
+	public String getFile(String name) throws Exception {
+		try (InputStream is = getClass().getResourceAsStream(name);
+			 Scanner scanner = new Scanner(is, StandardCharsets.UTF_8.name())) {
+			return scanner.useDelimiter("\\A").next();
+		}
+	}
+
 }

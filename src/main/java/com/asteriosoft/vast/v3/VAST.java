@@ -365,7 +365,7 @@ public final class VAST {
                     public static final class Linear {
 
                         @XmlElement(name = "Icons")
-                        protected VAST.Ad.InLine.Creatives.Creative.Linear.Icons icons;
+                        protected Icons icons;
                         @XmlElement(name = "CreativeExtensions")
                         protected CreativeExtensionsType creativeExtensions;
                         @XmlElement(name = "Duration", required = true)
@@ -382,11 +382,11 @@ public final class VAST {
                         @XmlAttribute
                         protected String skipoffset;
 
-                        public VAST.Ad.InLine.Creatives.Creative.Linear.Icons getIcons() {
+                        public Icons getIcons() {
                             return icons;
                         }
 
-                        public void setIcons(VAST.Ad.InLine.Creatives.Creative.Linear.Icons icons) {
+                        public void setIcons(Icons icons) {
                             this.icons = icons;
                         }
 
@@ -444,25 +444,6 @@ public final class VAST {
 
                         public void setSkipoffset(String skipoffset) {
                             this.skipoffset = skipoffset;
-                        }
-
-                        @XmlAccessorType(XmlAccessType.FIELD)
-                        @XmlType(name = "", propOrder = "icon")
-                        public static final class Icons {
-
-                            @XmlElement(name = "Icon", required = true)
-                            protected List<IconType> icon;
-
-                            public List<IconType> getIcon() {
-                                if (icon == null) {
-                                    icon = new ArrayList<>();
-                                }
-                                return icon;
-                            }
-
-                            public void setIcon(List<IconType> icon) {
-                                this.icon = icon;
-                            }
                         }
 
                         @XmlAccessorType(XmlAccessType.FIELD)
@@ -903,7 +884,7 @@ public final class VAST {
                         @XmlElement(name = "CreativeExtensions")
                         protected CreativeExtensionsType creativeExtensions;
                         @XmlElement(name = "Icons")
-                        protected VAST.Ad.Wrapper.Creatives.Creative.Linear.Icons icons;
+                        protected Icons icons;
                         @XmlElement(name = "TrackingEvents")
                         protected TrackingEventsType trackingEvents;
                         @XmlElement(name = "VideoClicks")
@@ -917,11 +898,11 @@ public final class VAST {
                             this.creativeExtensions = creativeExtensions;
                         }
 
-                        public VAST.Ad.Wrapper.Creatives.Creative.Linear.Icons getIcons() {
+                        public Icons getIcons() {
                             return icons;
                         }
 
-                        public void setIcons(VAST.Ad.Wrapper.Creatives.Creative.Linear.Icons icons) {
+                        public void setIcons(Icons icons) {
                             this.icons = icons;
                         }
 
@@ -939,25 +920,6 @@ public final class VAST {
 
                         public void setVideoClicks(VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks videoClicks) {
                             this.videoClicks = videoClicks;
-                        }
-
-                        @XmlAccessorType(XmlAccessType.FIELD)
-                        @XmlType(name = "", propOrder = "icon")
-                        public static final class Icons {
-
-                            @XmlElement(name = "Icon", required = true)
-                            protected List<IconType> icon;
-
-                            public List<IconType> getIcon() {
-                                if (icon == null) {
-                                    icon = new ArrayList<>();
-                                }
-                                return icon;
-                            }
-
-                            public void setIcon(List<IconType> icon) {
-                                this.icon = icon;
-                            }
                         }
 
                         @XmlAccessorType(XmlAccessType.FIELD)
