@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAST>
+    <Ad id="1465465165486">
+        <InLine>
+            <AdSystem version="0.0">JWright</AdSystem>
+            <AdTitle><![CDATA[James Media VPAID Creative]]></AdTitle>
+            <Description />
+            <Impression id="1465465165486"><![CDATA[http://jamescwright.com/pixel/1x1.gif?event=impression]]></Impression>
+            <Creatives>
+                <Creative>
+                    <Linear>
+                        <Duration>00:00:10</Duration>
+                        <TrackingEvents />
+                        <AdParameters />
+                        <VideoClicks />
+                        <MediaFiles>
+                            <MediaFile type="video/mp4" width="640" height="360" delivery="progressive" id="1434746302514" bitrate="320" maintainAspectRatio="true"><![CDATA[http://jamescwright.com/videos/test.mp4]]></MediaFile>
+                        </MediaFiles>
+                        <Icons>
+                            <Icon program="AdChoices" width="100" height="20" xPosition="0" yPosition="200" duration="00:00:10" offset="00:00:02">
+                                <IFrameResource><![CDATA[http://somesite.com/content.html]]></IFrameResource>
+                                <StaticResource creativeType="image/jpeg"><![CDATA[http://demo.tremormedia.com/proddev/vast/50x450_static.jpg]]></StaticResource>
+                                <HTMLResource><![CDATA[<a href="http://account.videoplaza.tv" target="_blank" alt=""></a>]]></HTMLResource>
+                            </Icon>
+                        </Icons>
+                    </Linear>
+                </Creative>
+                <Creative AdID="602678-NonLinear">
+                    <NonLinearAds>
+                        <TrackingEvents>
+                            <Tracking event="creativeView">http://myTrackingURL/nonlinear/creativeView</Tracking>
+                            <Tracking event="expand">http://myTrackingURL/nonlinear/expand</Tracking>
+                            <Tracking event="collapse">http://myTrackingURL/nonlinear/collapse</Tracking>
+                            <Tracking event="acceptInvitation">http://myTrackingURL/nonlinear/acceptInvitation</Tracking>
+                            <Tracking event="close">http://myTrackingURL/nonlinear/close</Tracking>
+                        </TrackingEvents>
+                        <NonLinear height="50" width="450" minSuggestedDuration="00:00:20">
+                            <IFrameResource><![CDATA[http://somesite.com/content.html]]></IFrameResource>
+                            <StaticResource creativeType="image/jpeg"><![CDATA[http://demo.tremormedia.com/proddev/vast/50x450_static.jpg]]></StaticResource>
+                            <HTMLResource><![CDATA[<a href="http://account.videoplaza.tv" target="_blank" alt=""></a>]]></HTMLResource>
+                            <NonLinearClickThrough>http://www.tremormedia.com</NonLinearClickThrough>
+                        </NonLinear>
+                    </NonLinearAds>
+                    <CompanionAds>
+                        <Companion id="1232" width="300" height="250" assetWidth="250" assetHeight="200" expandedWidth="350" expandedHeight="250">
+                            <IFrameResource><![CDATA[http://somesite.com/content.html]]></IFrameResource>
+                            <StaticResource creativeType="image/jpeg"><![CDATA[http://demo.tremormedia.com/proddev/vast/50x450_static.jpg]]></StaticResource>
+                            <HTMLResource><![CDATA[<a href="http://account.videoplaza.tv" target="_blank" alt=""></a>]]></HTMLResource>
+                            <CompanionClickThrough><![CDATA[https://iabtechlab.com]]></CompanionClickThrough>
+                        </Companion>
+                    </CompanionAds>
+                </Creative>
+            </Creatives>
+        </InLine>
+    </Ad>
+</VAST>

@@ -89,12 +89,12 @@ public final class ObjectFactory {
         return new VideoClicksType.CustomClick();
     }
 
-    public NonLinearType.StaticResource createNonLinearTypeStaticResource() {
-        return new NonLinearType.StaticResource();
+    public StaticResource createNonLinearTypeStaticResource() {
+        return new StaticResource();
     }
 
-    public CompanionType.StaticResource createCompanionTypeStaticResource() {
-        return new CompanionType.StaticResource();
+    public StaticResource createCompanionTypeStaticResource() {
+        return new StaticResource();
     }
 
     public TrackingEventsType.Tracking createTrackingEventsTypeTracking() {

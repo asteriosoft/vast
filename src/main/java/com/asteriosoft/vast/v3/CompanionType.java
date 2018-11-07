@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,7 @@ import java.util.List;
 public final class CompanionType {
 
     @XmlElement(name = "StaticResource")
-    protected CompanionType.StaticResource staticResource;
+    protected StaticResource staticResource;
     @XmlElement(name = "IFrameResource")
     @XmlSchemaType(name = "anyURI")
     @XmlCDATA
@@ -71,11 +70,11 @@ public final class CompanionType {
     @XmlAttribute
     protected String adSlotId;
 
-    public CompanionType.StaticResource getStaticResource() {
+    public StaticResource getStaticResource() {
         return staticResource;
     }
 
-    public void setStaticResource(CompanionType.StaticResource staticResource) {
+    public void setStaticResource(StaticResource staticResource) {
         this.staticResource = staticResource;
     }
 
@@ -224,35 +223,6 @@ public final class CompanionType {
 
     public void setAdSlotId(String adSlotId) {
         this.adSlotId = adSlotId;
-    }
-
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = "value")
-    public static final class StaticResource {
-
-        @XmlValue
-        @XmlSchemaType(name = "anyURI")
-        @XmlCDATA
-        protected String value;
-        @XmlAttribute(required = true)
-        protected String creativeType;
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-        public String getCreativeType() {
-            return creativeType;
-        }
-
-        public void setCreativeType(String creativeType) {
-            this.creativeType = creativeType;
-        }
-
     }
 
 }

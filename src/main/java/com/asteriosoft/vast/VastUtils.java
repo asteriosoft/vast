@@ -80,7 +80,7 @@ public final class VastUtils {
         }
         return false;
     }
-    
+
     public static VastVersion parseVastVersion(String vast) {
         int vastTagIndex = vast.indexOf("<VAST");
         if (vastTagIndex < 0) {
@@ -109,10 +109,10 @@ public final class VastUtils {
         }
     }
 
-    static BaseVast<?> getVastHelper(String vast) {
+    static BaseVast<?> getVastHelper(VastVersion version) {
         BaseVast<?> helper = null;
         try {
-            switch (parseVastVersion(vast)) {
+            switch (version) {
                 case VAST2:
                     helper = vast2Helper;
                     break;
@@ -127,25 +127,31 @@ public final class VastUtils {
         }
         return helper;
     }
-    
+
     public static String addVastTrackingUrls(String vastStr, VastTrackers trackers) throws VastUtilsException {
-    	if (trackers == null || trackers.isEmpty()) {
-    		return vastStr;
-    	}
-    	//
+        return addVastTrackingUrls(vastStr, parseVastVersion(vastStr), trackers);
+    }
+
+    public static String addVastTrackingUrls(String vastStr, VastVersion version, VastTrackers trackers) throws VastUtilsException {
+        return transform(new VastTransformationInfo(vastStr, version, trackers, null));
+    }
+
+    public static String transform(VastTransformationInfo info) throws VastUtilsException{
         try {
-            vastStr = cutVast(vastStr);
-            BaseVast<?> vastHelper = getVastHelper(vastStr);
-            return vastHelper == null
-                    ? StringUtils.EMPTY
-                    : vastHelper.addVastTrackingUrls(vastStr, trackers);
+           String vast = cutVast(info.getVastStr());
+            VastVersion version = info.getVersion() == null ? parseVastVersion(vast) : info.getVersion();
+            BaseVast<?> vastHelper = getVastHelper(version);
+            if (vastHelper == null) {
+                return null;
+            }
+            return vastHelper.transform(vast, info);
         } catch (Exception err) {
             throw new VastUtilsException(err);
         }
     }
-    
+
 	public static String printVast(Object vast) throws VastUtilsException {
-	    try {    	
+	    try {
 	    	if (vast instanceof VAST) {
 	    		return vast2Helper.marshal((VAST)vast);
 	    	} else if (vast instanceof com.asteriosoft.vast.v3.VAST) {
@@ -159,11 +165,11 @@ public final class VastUtils {
 	        throw new VastUtilsException(err);
 	    }
 	}
-    
+
 	public static Object parseVast(String vast) throws VastUtilsException {
 	    try {
 	        vast = cutVast(vast);
-	        BaseVast<?> vastHelper = getVastHelper(vast);
+	        BaseVast<?> vastHelper = getVastHelper(parseVastVersion(vast));
 	        return vastHelper == null
 	                ? null
 	                : vastHelper.unmarshal(vast);
@@ -171,14 +177,14 @@ public final class VastUtils {
 	        throw new VastUtilsException(err);
 	    }
 	}
-	
+
 	public static VastTrackers getWrapperTrackers(Object vast) {
-		
+
         final Map<String, Set<String>> linearTrackingUrls = new LinkedHashMap<>(3);
         final Set<String> linearClickUrls = new LinkedHashSet<>(3);
         final Map<String, Set<String>> nonLinearTrackingUrls = new LinkedHashMap<>(3);
         final Set<String> nonLinearClickUrls = new LinkedHashSet<>(3);
-		
+
 	    if (vast instanceof com.asteriosoft.vast.v2.VAST) {
 	        List<com.asteriosoft.vast.v2.VAST.Ad> adList = ((com.asteriosoft.vast.v2.VAST) vast).getAd();
 	        if (CollectionUtils.isEmpty(adList)) {
@@ -195,7 +201,7 @@ public final class VastUtils {
 	        //
             List<String> impressions = wrapper.getImpression();
             List<String> errors = StringUtils.isBlank(wrapper.getError()) ? Collections.emptyList() : Collections.singletonList(wrapper.getError());
-            
+
             if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
             	for(VAST.Ad.Wrapper.Creatives.Creative cr: wrapper.getCreatives().getCreative()) {
             		if (cr.getLinear() != null) {
@@ -244,7 +250,7 @@ public final class VastUtils {
 	        //
             List<String> impressions = wrapper.getImpression();
             List<String> errors = StringUtils.isBlank(wrapper.getError()) ? Collections.emptyList() : Collections.singletonList(wrapper.getError());
-            
+
             if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
             	for(com.asteriosoft.vast.v3.VAST.Ad.Wrapper.Creatives.Creative cr: wrapper.getCreatives().getCreative()) {
             		if (cr.getLinear() != null) {
@@ -266,7 +272,7 @@ public final class VastUtils {
             			}
             		}
             		if (cr.getNonLinearAds() != null) {
-            			if (cr.getNonLinearAds().getTrackingEvents() != null) {            			
+            			if (cr.getNonLinearAds().getTrackingEvents() != null) {
 	            			List<com.asteriosoft.vast.v3.TrackingEventsType.Tracking> trackings = cr.getNonLinearAds().getTrackingEvents().getTracking();
 	            			if (CollectionUtils.isNotEmpty(trackings)) {
 		            			for (com.asteriosoft.vast.v3.TrackingEventsType.Tracking tracking : trackings) {
@@ -274,7 +280,7 @@ public final class VastUtils {
 		            			}
 	            			}
             			}
-            			
+
             			if (cr.getNonLinearAds().getNonLinear() != null) {
             				for(NonLinearWrapperType nl: cr.getNonLinearAds().getNonLinear()) {
             					List<String> cls = nl.getNonLinearClickTracking();
@@ -283,7 +289,7 @@ public final class VastUtils {
             					}
             				}
             			}
-            		}            		
+            		}
             	}
             }
 
@@ -300,8 +306,8 @@ public final class VastUtils {
 	        com.asteriosoft.vast.v4.VAST.Ad.Wrapper wrapper = vast4Ad.getWrapper();
 	        if (wrapper == null) {
 	        	return null;
-	        }	        
-	        //	
+	        }
+	        //
             List<String> impressions = null;
             List<AnyURIType> anyURITypes = wrapper.getImpression();
             if (CollectionUtils.isNotEmpty(anyURITypes)) {
@@ -350,7 +356,7 @@ public final class VastUtils {
             						nonLinearClickUrls.addAll(cls);
             					}
             				}
-            			}            			
+            			}
             		}
             	}
             }
@@ -359,5 +365,5 @@ public final class VastUtils {
 	    } else {
 	        return null;
 	    }
-	}	
+	}
 }

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 abstract class BaseVast<V> {
 
@@ -15,20 +16,20 @@ abstract class BaseVast<V> {
     private static final String SYMBOL_PLUS_ENCODED = "%20";
 
     static class InjectTrackersResult {
-		final boolean linearTracksAdded;
-    	final boolean linearClickUrlsAdded;
-    	final boolean nonLinearTracksAdded;
-    	final boolean nonLinearClickUrlsAdded;
-    	
-    	public InjectTrackersResult(boolean linearTracksAdded, boolean linearClickUrlsAdded, boolean nonLinearTracksAdded, boolean nonLinearClickUrlsAdded) {
-			super();
-			this.linearTracksAdded = linearTracksAdded;
-			this.linearClickUrlsAdded = linearClickUrlsAdded;
-			this.nonLinearTracksAdded = nonLinearTracksAdded;
-			this.nonLinearClickUrlsAdded = nonLinearClickUrlsAdded;
-		}    	
+        final boolean linearTracksAdded;
+        final boolean linearClickUrlsAdded;
+        final boolean nonLinearTracksAdded;
+        final boolean nonLinearClickUrlsAdded;
+
+        public InjectTrackersResult(boolean linearTracksAdded, boolean linearClickUrlsAdded, boolean nonLinearTracksAdded, boolean nonLinearClickUrlsAdded) {
+            super();
+            this.linearTracksAdded = linearTracksAdded;
+            this.linearClickUrlsAdded = linearClickUrlsAdded;
+            this.nonLinearTracksAdded = nonLinearTracksAdded;
+            this.nonLinearClickUrlsAdded = nonLinearClickUrlsAdded;
+        }
     }
-    
+
     private static String replaceAmpersandChar(String xml) {
         int max = xml.length();
         StringBuilder sb = new StringBuilder(max);
@@ -126,11 +127,11 @@ abstract class BaseVast<V> {
         return (T) data.get(key);
     }
 
-    String marshal(V vast) throws XmlMarshalingException {
-        return getXmlMarshaling().marshal(vast);
+    public String marshal(V vast) throws XmlMarshalingException {
+        return patchExtensions(getXmlMarshaling().marshal(vast));
     }
 
-    V unmarshal(String str) throws XmlMarshalingException {
+    public V unmarshal(String str) throws XmlMarshalingException {
         if (StringUtils.isEmpty(str)) {
             return null;
         }
@@ -138,23 +139,57 @@ abstract class BaseVast<V> {
         return (V) getXmlMarshaling().unmarshal(str, getVastClass());
     }
 
-    String addVastTrackingUrls(String vastStr, VastTrackers trackers) throws XmlMarshalingException {
-        String result = injectTracking(vastStr, trackers);
-        return patchExtensions(result);
+    public void addVastTrackingUrls(V vast, VastTrackers trackers) throws XmlMarshalingException {
+        injectTracking(vast, trackers);
     }
 
-    /*
-    String addVastTrackingUrls(V vast, VastTrackers trackers) throws XmlMarshalingException {
-        String result = injectTracking(vast, trackers);
-        return patchExtensions(result);
-    }*/
-    
+    public String transform(String str, VastTransformationInfo info) throws XmlMarshalingException {
+        if (StringUtils.isEmpty(str)) {
+            return null;
+        }
+        V vast = unmarshal(str);
+        if (info.getTrackers() != null) {
+            addVastTrackingUrls(vast, info.getTrackers());
+        }
+        if (info.getHtmlContentApplier() != null) {
+            convertAllResourcesToHTML(vast, info.getHtmlContentApplier());
+        }
+        return marshal(vast);
+    }
+
+    protected String createImg(String src, Number height, Number width) {
+        StringBuilder sb = new StringBuilder(60 + src.length());
+        if (width != null) {
+            sb.append("<img width=\"").append(width);
+        }
+        if (height != null) {
+            sb.append("\" height=\"").append(height);
+        }
+        return sb.append("\" src=\"").append(src)
+                .append("\" border=\"0\"/>").toString();
+    }
+
+    protected String createIframe(String src, Number height, Number width) {
+        StringBuilder sb = new StringBuilder(120 + src.length());
+        if (width != null) {
+            sb.append("<iframe width=\"").append(width);
+        }
+        if (height != null) {
+            sb.append("\" height=\"").append(height);
+        }
+
+        return sb.append("\" scrolling=No frameborder=0 marginheight=0 marginwidth=0  src=\"")
+                .append(src).append("\" />").toString();
+    }
+
+    protected abstract void convertAllResourcesToHTML(V vast, BiFunction<String, String, String> htmlContentApplier);
+
     protected abstract VastVersion getVastVersion();
 
-    protected abstract String injectTracking(String vastStr, VastTrackers trackers) throws XmlMarshalingException;
-    //protected abstract String injectTracking(V vast, VastTrackers trackers) throws XmlMarshalingException;
-    
+    protected abstract void injectTracking(V vast, VastTrackers trackers) throws XmlMarshalingException;
+
     protected abstract XmlMarshaling getXmlMarshaling();
 
     protected abstract Class<?> getVastClass();
+
 }

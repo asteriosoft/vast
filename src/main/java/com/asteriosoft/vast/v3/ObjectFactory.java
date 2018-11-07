@@ -105,24 +105,24 @@ public final class ObjectFactory {
         return new NonLinearWrapperType();
     }
 
-    public NonLinearType.StaticResource createNonLinearTypeStaticResource() {
-        return new NonLinearType.StaticResource();
+    public StaticResource createNonLinearTypeStaticResource() {
+        return new StaticResource();
     }
 
-    public CompanionType.StaticResource createCompanionTypeStaticResource() {
-        return new CompanionType.StaticResource();
+    public StaticResource createCompanionTypeStaticResource() {
+        return new StaticResource();
     }
 
-    public IconType.StaticResource createIconTypeStaticResource() {
-        return new IconType.StaticResource();
+    public StaticResource createIconTypeStaticResource() {
+        return new StaticResource();
     }
 
     public IconType.IconClicks createIconTypeIconClicks() {
         return new IconType.IconClicks();
     }
 
-    public CompanionWrapperType.StaticResource createCompanionWrapperTypeStaticResource() {
-        return new CompanionWrapperType.StaticResource();
+    public StaticResource createCompanionWrapperTypeStaticResource() {
+        return new StaticResource();
     }
 
     public TrackingEventsType.Tracking createTrackingEventsTypeTracking() {
@@ -157,8 +157,8 @@ public final class ObjectFactory {
         return new VAST.Ad.Wrapper.Creatives.Creative.NonLinearAds();
     }
 
-    public VAST.Ad.Wrapper.Creatives.Creative.Linear.Icons createVASTAdWrapperCreativesCreativeLinearIcons() {
-        return new VAST.Ad.Wrapper.Creatives.Creative.Linear.Icons();
+    public Icons createVASTAdWrapperCreativesCreativeLinearIcons() {
+        return new Icons();
     }
 
     public VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking createVASTAdWrapperCreativesCreativeLinearVideoClicksClickTracking() {
@@ -181,8 +181,8 @@ public final class ObjectFactory {
         return new VAST.Ad.InLine.Creatives.Creative.NonLinearAds();
     }
 
-    public VAST.Ad.InLine.Creatives.Creative.Linear.Icons createVASTAdInLineCreativesCreativeLinearIcons() {
-        return new VAST.Ad.InLine.Creatives.Creative.Linear.Icons();
+    public Icons createVASTAdInLineCreativesCreativeLinearIcons() {
+        return new Icons();
     }
 
     public VAST.Ad.InLine.Creatives.Creative.Linear.MediaFiles.MediaFile createVASTAdInLineCreativesCreativeLinearMediaFilesMediaFile() {
