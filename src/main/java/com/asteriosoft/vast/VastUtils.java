@@ -169,6 +169,8 @@ public final class VastUtils {
 	public static Object parseVast(String vast) throws VastUtilsException {
 	    try {
 	        vast = cutVast(vast);
+	        vast = fixVast(vast);
+	        
 	        BaseVast<?> vastHelper = getVastHelper(parseVastVersion(vast));
 	        return vastHelper == null
 	                ? null
@@ -178,6 +180,30 @@ public final class VastUtils {
 	    }
 	}
 
+	static String fixVast(String vast) {
+		int res1 = vast.indexOf("<HTMLResource>");
+		if (res1 > 0) {
+			int res2 = vast.indexOf("</HTMLResource>", res1);
+			if (res2 > 0) {
+				int cdataIndex = vast.indexOf("<![CDATA[", res1);
+				if (cdataIndex < 0) {
+					String part1 = vast.substring(0, res1 + "<HTMLResource>".length());
+					String part2 = vast.substring(res1 + "<HTMLResource>".length(), res2);
+					String part3 = vast.substring(res2, vast.length());
+					StringBuilder sb = new StringBuilder(vast.length() + 12);
+					sb
+					.append(part1)
+					.append("<![CDATA[")
+					.append(part2)
+					.append("]]>")
+					.append(part3);
+					return sb.toString();
+				}
+			}
+		}
+		return vast;
+	}
+	
 	public static VastTrackers getWrapperTrackers(Object vast) {
 
         final Map<String, Set<String>> linearTrackingUrls = new LinkedHashMap<>(3);
