@@ -25,18 +25,41 @@ public final class VastUtils {
     private static final Vast3 vast3Helper = new Vast3();
     private static final Vast4 vast4Helper = new Vast4();
 
-    static String cutVast(String adCode) {
-        adCode = removeIabXmlns(adCode).trim();
+    static String fixVast(String vast) {
+    	// fix Xmlns
+        vast = removeIabXmlns(vast).trim();
 
-        if (adCode.endsWith("</VAST>")) {
-            return adCode;
+        // fix vast end
+        if (!vast.endsWith("</VAST>")) {
+            int z = vast.indexOf("</VAST>");
+            if (z > 0) {
+                vast = vast.substring(0, z + "</VAST>".length());
+            }
         }
-
-        int z = adCode.indexOf("</VAST>");
-        if (z > 0) {
-            adCode = adCode.substring(0, z + "</VAST>".length());
-        }
-        return adCode;
+        
+        // fix CDAT for HTMLResource
+		int res1 = vast.indexOf("<HTMLResource>");
+		if (res1 > 0) {
+			int res2 = vast.indexOf("</HTMLResource>", res1);
+			if (res2 > 0) {
+				int cdataIndex = vast.indexOf("<![CDATA[", res1);
+				if (cdataIndex < 0) {
+					String part1 = vast.substring(0, res1 + "<HTMLResource>".length());
+					String part2 = vast.substring(res1 + "<HTMLResource>".length(), res2);
+					String part3 = vast.substring(res2, vast.length());
+					StringBuilder sb = new StringBuilder(vast.length() + 12);
+					sb
+					.append(part1)
+					.append("<![CDATA[")
+					.append(part2)
+					.append("]]>")
+					.append(part3);
+					return sb.toString();
+				}
+			}
+		}
+		return vast;
+        
     }
 
     private static String removeIabXmlns(String vast) {
@@ -138,7 +161,7 @@ public final class VastUtils {
 
     public static String transform(VastTransformationInfo info) throws VastUtilsException{
         try {
-           String vast = cutVast(info.getVastStr());
+        	String vast = fixVast(info.getVastStr());
             VastVersion version = info.getVersion() == null ? parseVastVersion(vast) : info.getVersion();
             BaseVast<?> vastHelper = getVastHelper(version);
             if (vastHelper == null) {
@@ -168,7 +191,6 @@ public final class VastUtils {
 
 	public static Object parseVast(String vast) throws VastUtilsException {
 	    try {
-	        vast = cutVast(vast);
 	        vast = fixVast(vast);
 	        
 	        BaseVast<?> vastHelper = getVastHelper(parseVastVersion(vast));
@@ -180,30 +202,6 @@ public final class VastUtils {
 	    }
 	}
 
-	static String fixVast(String vast) {
-		int res1 = vast.indexOf("<HTMLResource>");
-		if (res1 > 0) {
-			int res2 = vast.indexOf("</HTMLResource>", res1);
-			if (res2 > 0) {
-				int cdataIndex = vast.indexOf("<![CDATA[", res1);
-				if (cdataIndex < 0) {
-					String part1 = vast.substring(0, res1 + "<HTMLResource>".length());
-					String part2 = vast.substring(res1 + "<HTMLResource>".length(), res2);
-					String part3 = vast.substring(res2, vast.length());
-					StringBuilder sb = new StringBuilder(vast.length() + 12);
-					sb
-					.append(part1)
-					.append("<![CDATA[")
-					.append(part2)
-					.append("]]>")
-					.append(part3);
-					return sb.toString();
-				}
-			}
-		}
-		return vast;
-	}
-	
 	public static VastTrackers getWrapperTrackers(Object vast) {
 
         final Map<String, Set<String>> linearTrackingUrls = new LinkedHashMap<>(3);
