@@ -1,26 +1,18 @@
 package com.asteriosoft.vast;
 
-import java.util.function.BiFunction;
-
 public class VastTransformationInfo {
 
     private String vastStr;
     private VastVersion version;
     private VastTrackers trackers;
-    private BiFunction<String, String, String> htmlContentApplier;
 
     public VastTransformationInfo() {
     }
 
-    public VastTransformationInfo(String vastStr, VastVersion version, VastTrackers trackers, BiFunction<String, String, String> htmlContentApplier) {
+    public VastTransformationInfo(String vastStr, VastVersion version, VastTrackers trackers) {
         this.vastStr = vastStr;
         this.version = version;
         this.trackers = trackers;
-        this.htmlContentApplier = htmlContentApplier;
-    }
-
-    public VastTransformationInfo(String vastStr, VastVersion version, VastTrackers trackers) {
-        this(vastStr, version, trackers, null);
     }
 
     public String getVastStr() {
@@ -45,14 +37,6 @@ public class VastTransformationInfo {
 
     public void setTrackers(VastTrackers trackers) {
         this.trackers = trackers;
-    }
-
-    public BiFunction<String, String, String> getHtmlContentApplier() {
-        return htmlContentApplier;
-    }
-
-    public void setHtmlContentApplier(BiFunction<String, String, String> htmlContentApplier) {
-        this.htmlContentApplier = htmlContentApplier;
     }
 
 }

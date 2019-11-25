@@ -8,7 +8,8 @@ public enum VastVersion {
 
     VAST2(2, "2.0"),
     VAST3(3, "3.0"),
-    VAST4(4, "4.0");
+    VAST4(4, "4.0"),
+    VAST42(42, "4.2");
 
     private static final Map<Integer, VastVersion> NUMBER_TO_VERSION;
 

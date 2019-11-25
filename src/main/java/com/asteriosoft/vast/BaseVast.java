@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.function.BiFunction;
 
 abstract class BaseVast<V> {
 
@@ -151,9 +150,6 @@ abstract class BaseVast<V> {
         if (info.getTrackers() != null) {
             addVastTrackingUrls(vast, info.getTrackers());
         }
-        if (info.getHtmlContentApplier() != null) {
-            convertAllResourcesToHTML(vast, info.getHtmlContentApplier());
-        }
         return marshal(vast);
     }
 
@@ -181,8 +177,6 @@ abstract class BaseVast<V> {
         return sb.append("\" scrolling=No frameborder=0 marginheight=0 marginwidth=0  src=\"")
                 .append(src).append("\" />").toString();
     }
-
-    protected abstract void convertAllResourcesToHTML(V vast, BiFunction<String, String, String> htmlContentApplier);
 
     protected abstract VastVersion getVastVersion();
 
