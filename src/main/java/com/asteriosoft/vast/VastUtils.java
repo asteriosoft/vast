@@ -6,6 +6,7 @@ import com.asteriosoft.vast.v3.NonLinearWrapperType;
 import com.asteriosoft.vast.v4.AnyURIType;
 import com.asteriosoft.vast.v4.TrackingEventsLinearType;
 import com.asteriosoft.vast.v4.TrackingEventsNonLinearType;
+import com.asteriosoft.vast.v41.VideoClicksBaseType;
 import com.asteriosoft.vast.v42.ImpressionType;
 import com.asteriosoft.vast.v42.NonLinearAdBaseType;
 import com.asteriosoft.vast.v42.VideoClicksType;
@@ -26,6 +27,7 @@ public final class VastUtils {
     private static final Vast2 vast2Helper = new Vast2();
     private static final Vast3 vast3Helper = new Vast3();
     private static final Vast4 vast4Helper = new Vast4();
+    private static final Vast41 vast41Helper = new Vast41();
     private static final Vast42 vast42Helper = new Vast42();
 
     static String fixVast(String vast) {
@@ -126,7 +128,9 @@ public final class VastUtils {
             } else if (version.startsWith("3.")) {
                 return VastVersion.VAST3;
             } else if (version.startsWith("4.")) {
-                if (Objects.equals(version, VastVersion.VAST42.toString())) {
+                if (Objects.equals(version, VastVersion.VAST41.toString())) {
+                    return VastVersion.VAST41;
+                } else if (Objects.equals(version, VastVersion.VAST42.toString())) {
                     return VastVersion.VAST42;
                 } else {
                     return VastVersion.VAST4;
@@ -151,6 +155,9 @@ public final class VastUtils {
                     break;
                 case VAST4:
                     helper = vast4Helper;
+                    break;
+                case VAST41:
+                    helper = vast41Helper;
                     break;
                 case VAST42:
                     helper = vast42Helper;
@@ -191,6 +198,8 @@ public final class VastUtils {
                 return vast3Helper.marshal((com.asteriosoft.vast.v3.VAST) vast);
             } else if (vast instanceof com.asteriosoft.vast.v4.VAST) {
                 return vast4Helper.marshal((com.asteriosoft.vast.v4.VAST) vast);
+            } else if (vast instanceof com.asteriosoft.vast.v41.VAST) {
+                return vast41Helper.marshal((com.asteriosoft.vast.v41.VAST) vast);
             } else if (vast instanceof com.asteriosoft.vast.v42.VAST) {
                 return vast42Helper.marshal((com.asteriosoft.vast.v42.VAST) vast);
             } else {
@@ -410,6 +419,74 @@ public final class VastUtils {
             }
 
             return new VastTrackers(impressions, wrapper.getError(), linearTrackingUrls, linearClickUrls, nonLinearTrackingUrls, nonLinearClickUrls);
+        } else if (vast instanceof com.asteriosoft.vast.v41.VAST) {
+            List<com.asteriosoft.vast.v41.VAST.Ad> adList = ((com.asteriosoft.vast.v41.VAST) vast).getAd();
+            if (CollectionUtils.isEmpty(adList)) {
+                return null;
+            }
+            if (adList.size() > 1) {
+                return null;
+            }
+            com.asteriosoft.vast.v41.VAST.Ad vast4Ad = adList.get(0);
+            com.asteriosoft.vast.v41.WrapperType wrapper = vast4Ad.getWrapper();
+            if (wrapper == null) {
+                return null;
+            }
+            //
+            List<String> impressions = null;
+            List<com.asteriosoft.vast.v41.ImpressionType> impressionTypes = wrapper.getImpression();
+            if (CollectionUtils.isNotEmpty(impressionTypes)) {
+                impressions = new ArrayList<>(impressionTypes.size());
+                for (com.asteriosoft.vast.v41.ImpressionType impressionType : impressionTypes) {
+                    String value = impressionType.getValue();
+                    if (StringUtils.isNotBlank(value)) {
+                        impressions.add(value);
+                    }
+                }
+            }
+
+            if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
+                for (com.asteriosoft.vast.v41.CreativeWrapperType cr : wrapper.getCreatives().getCreative()) {
+                    if (cr.getLinear() != null) {
+                        if (cr.getLinear().getTrackingEvents() != null && cr.getLinear().getTrackingEvents() != null) {
+                            List<com.asteriosoft.vast.v41.TrackingEventsType.Tracking> trackings = cr.getLinear().getTrackingEvents().getTracking();
+                            if (CollectionUtils.isNotEmpty(trackings)) {
+                                for (com.asteriosoft.vast.v41.TrackingEventsType.Tracking tracking : trackings) {
+                                    linearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> new LinkedHashSet<>(1)).add(tracking.getValue());
+                                }
+                            }
+                        }
+                        if (cr.getLinear().getVideoClicks() != null) {
+                            List<VideoClicksBaseType.ClickTracking> clickTrackings = cr.getLinear().getVideoClicks().getClickTracking();
+                            if (CollectionUtils.isNotEmpty(clickTrackings)) {
+                                for (VideoClicksBaseType.ClickTracking clickTracking : clickTrackings) {
+                                    linearClickUrls.add(clickTracking.getValue());
+                                }
+                            }
+                        }
+                    }
+                    if (cr.getNonLinearAds() != null) {
+                        if (cr.getNonLinearAds().getTrackingEvents() != null) {
+                            List<com.asteriosoft.vast.v41.TrackingEventsType.Tracking> trackings = cr.getNonLinearAds().getTrackingEvents().getTracking();
+                            if (CollectionUtils.isNotEmpty(trackings)) {
+                                for (com.asteriosoft.vast.v41.TrackingEventsType.Tracking tracking : trackings) {
+                                    nonLinearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> new LinkedHashSet<>(1)).add(tracking.getValue());
+                                }
+                            }
+                        }
+                        if (cr.getNonLinearAds().getNonLinear() != null) {
+                            for (com.asteriosoft.vast.v41.NonLinearAdBaseType nl : cr.getNonLinearAds().getNonLinear()) {
+                                com.asteriosoft.vast.v41.NonLinearAdBaseType.NonLinearClickTracking click = nl.getNonLinearClickTracking();
+                                if (click != null) {
+                                    nonLinearClickUrls.add(click.getValue());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return new VastTrackers(impressions, wrapper.getError(), linearTrackingUrls, linearClickUrls, nonLinearTrackingUrls, nonLinearClickUrls);
         } else if (vast instanceof com.asteriosoft.vast.v42.VAST) {
             List<com.asteriosoft.vast.v42.VAST.Ad> adList = ((com.asteriosoft.vast.v42.VAST) vast).getAd();
             if (CollectionUtils.isEmpty(adList)) {
@@ -425,10 +502,10 @@ public final class VastUtils {
             }
             //
             List<String> impressions = null;
-            List<ImpressionType> impressionTypes = wrapper.getImpression();
+            List<com.asteriosoft.vast.v42.ImpressionType> impressionTypes = wrapper.getImpression();
             if (CollectionUtils.isNotEmpty(impressionTypes)) {
                 impressions = new ArrayList<>(impressionTypes.size());
-                for (ImpressionType impressionType : impressionTypes) {
+                for (com.asteriosoft.vast.v42.ImpressionType impressionType : impressionTypes) {
                     String value = impressionType.getValue();
                     if (StringUtils.isNotBlank(value)) {
                         impressions.add(value);
@@ -467,9 +544,9 @@ public final class VastUtils {
                         }
                         if (cr.getNonLinearAds().getNonLinear() != null) {
                             for (com.asteriosoft.vast.v42.NonLinearAdBaseType nl : cr.getNonLinearAds().getNonLinear()) {
-								NonLinearAdBaseType.NonLinearClickTracking cls = nl.getNonLinearClickTracking();
-								if (cls != null) {
-                                    nonLinearClickUrls.add(cls.getValue());
+                                com.asteriosoft.vast.v42.NonLinearAdBaseType.NonLinearClickTracking click = nl.getNonLinearClickTracking();
+                                if (click != null) {
+                                    nonLinearClickUrls.add(click.getValue());
                                 }
                             }
                         }

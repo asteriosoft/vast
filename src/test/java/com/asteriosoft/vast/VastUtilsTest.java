@@ -78,6 +78,9 @@ public class VastUtilsTest {
         wrapper = WRAPPER_LINEAR.replaceAll("2\\.0", "4.0");
         testWrapper(wrapper, VastVersion.VAST4);
 
+        wrapper = WRAPPER_LINEAR.replaceAll("2\\.0", "4.1");
+        testWrapper(wrapper, VastVersion.VAST41);
+
         wrapper = WRAPPER_LINEAR.replaceAll("2\\.0", "4.2");
         testWrapper(wrapper, VastVersion.VAST42);
     }

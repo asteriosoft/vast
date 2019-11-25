@@ -103,40 +103,6 @@ final class Vast42 extends BaseVast<VAST> {
                     }
                 }
 
-                // todo: NonLinearAdBaseType & NonLinearAdInlineType need to clarify
-                /*if (CollectionUtils.isNotEmpty(clickUrlsNonLinear)) {
-                    List<NonLinearAdBaseType> nonLinearTypes = creative.getNonLinearAds().getNonLinear();
-                    if (CollectionUtils.isEmpty(nonLinearTypes) && createMissingElements) {
-                        creative.getNonLinearAds().getNonLinear().add(new NonLinearAdBaseType());
-                    }
-                    if (CollectionUtils.isNotEmpty(nonLinearTypes)) {
-                        for (NonLinearAdBaseType nonLinearAdBaseType : nonLinearTypes) {
-                            for (String clickUrl : clickUrlsNonLinear) {
-                                if (StringUtils.isEmpty(clickUrl)) {
-                                    continue;
-                                }
-                                nonLinearAdBaseType.getNonLinearClickTracking().add(clickUrl);
-                            }
-                        }
-                    }
-                    TrackingEventsType trackingEvents = creative.getNonLinearAds().getTrackingEvents();
-                    if (CollectionUtils.isEmpty(trackingEvents.getTracking()) && createMissingElements) {
-                        trackingEvents.getTracking().add(new TrackingEventsType.Tracking());
-                        creative.getNonLinearAds().setTrackingEvents(trackingEvents);
-                    }
-                    if (CollectionUtils.isNotEmpty(trackingEvents.getTracking())) {
-                        for (TrackingEventsType.Tracking tracking : trackingEvents.getTracking()) {
-                            for (String clickUrl : clickUrlsNonLinear) {
-                                if (StringUtils.isEmpty(clickUrl)) {
-                                    continue;
-                                }
-                                tracking.getNonLinearClickTracking().add(clickUrl);
-                            }
-                        }
-                    }
-                    nonLinearClickUrlsAdded = true;
-                }*/
-
                 // EVENTS
                 if (MapUtils.isNotEmpty(trackingUrlsNonLinear)) {
                     TrackingEventsType trackingEvents = creative.getNonLinearAds().getTrackingEvents();
