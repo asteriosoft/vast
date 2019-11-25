@@ -1,15 +1,9 @@
 package com.asteriosoft.vast;
 
-import com.asteriosoft.vast.v3.CompanionType;
-import com.asteriosoft.vast.v3.CompanionWrapperType;
-import com.asteriosoft.vast.v3.HTMLResourceType;
-import com.asteriosoft.vast.v3.IconType;
-import com.asteriosoft.vast.v3.Icons;
 import com.asteriosoft.vast.v3.ImpressionType;
 import com.asteriosoft.vast.v3.NonLinearType;
 import com.asteriosoft.vast.v3.NonLinearWrapperType;
 import com.asteriosoft.vast.v3.ObjectFactory;
-import com.asteriosoft.vast.v3.StaticResource;
 import com.asteriosoft.vast.v3.TrackingEventsType;
 import com.asteriosoft.vast.v3.TrackingEventsType.Tracking;
 import com.asteriosoft.vast.v3.VAST;
@@ -17,8 +11,6 @@ import com.asteriosoft.vast.v3.VAST.Ad;
 import com.asteriosoft.vast.v3.VideoClicksType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -27,21 +19,18 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 final class Vast3 extends BaseVast<VAST> {
 
     private final XmlMarshaling xmlMarshaling = new XmlMarshaling(ObjectFactory.class);
 
-    private InjectTrackersResult injectWrapperTrackers(boolean createMissingElements, VAST.Ad.Wrapper.Creatives creatives, 
-    		Set<String> clickUrls, Map<String, Set<String>> trackingUrls, Set<String> clickUrlsNonLinear, Map<String, Set<String>> trackingUrlsNonLinear) {
-    	boolean linearClickUrlsAdded = false;
-    	boolean linearTracksAdded = false;
-    	boolean nonLinearClickUrlsAdded = false;    	
-    	boolean nonLinearTracksAdded = false;
-    	
+    private InjectTrackersResult injectWrapperTrackers(boolean createMissingElements, VAST.Ad.Wrapper.Creatives creatives,
+                                                       Set<String> clickUrls, Map<String, Set<String>> trackingUrls, Set<String> clickUrlsNonLinear, Map<String, Set<String>> trackingUrlsNonLinear) {
+        boolean linearClickUrlsAdded = false;
+        boolean linearTracksAdded = false;
+        boolean nonLinearClickUrlsAdded = false;
+        boolean nonLinearTracksAdded = false;
+
         for (VAST.Ad.Wrapper.Creatives.Creative creative : creatives.getCreative()) {
             // LINEAR
             if (creative.getLinear() != null) {
@@ -53,14 +42,14 @@ final class Vast3 extends BaseVast<VAST> {
                         videoClicks = new VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks();
                         creative.getLinear().setVideoClicks(videoClicks);
                     }
-                    if (videoClicks != null) { 
-	                    for (String clickUrl : clickUrls) {
-	                        List<VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking> trackingsList = videoClicks.getClickTracking();
-	                        VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking tracking = new VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking();
-	                        tracking.setValue(clickUrl);
-	                        trackingsList.add(tracking);
-	                    }
-	                    linearClickUrlsAdded = true;	                    
+                    if (videoClicks != null) {
+                        for (String clickUrl : clickUrls) {
+                            List<VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking> trackingsList = videoClicks.getClickTracking();
+                            VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking tracking = new VAST.Ad.Wrapper.Creatives.Creative.Linear.VideoClicks.ClickTracking();
+                            tracking.setValue(clickUrl);
+                            trackingsList.add(tracking);
+                        }
+                        linearClickUrlsAdded = true;
                     }
                 }
 
@@ -71,19 +60,19 @@ final class Vast3 extends BaseVast<VAST> {
                         creative.getLinear().setTrackingEvents(eventsType = new TrackingEventsType());
                     }
                     if (eventsType != null) {
-	                    List<TrackingEventsType.Tracking> trackingList = eventsType.getTracking();
-	                    for (Map.Entry<String, Set<String>> stringListEntry : trackingUrls.entrySet()) {
-	                        for (String url : stringListEntry.getValue()) {
-	                            if (StringUtils.isEmpty(url)) {
-	                                continue;
-	                            }
-	                            Tracking tracking = new Tracking();
-	                            tracking.setEvent(stringListEntry.getKey());
-	                            tracking.setValue(url);
-	                            trackingList.add(tracking);
-	                        }
-	                    }
-	                    linearTracksAdded = true;
+                        List<TrackingEventsType.Tracking> trackingList = eventsType.getTracking();
+                        for (Map.Entry<String, Set<String>> stringListEntry : trackingUrls.entrySet()) {
+                            for (String url : stringListEntry.getValue()) {
+                                if (StringUtils.isEmpty(url)) {
+                                    continue;
+                                }
+                                Tracking tracking = new Tracking();
+                                tracking.setEvent(stringListEntry.getKey());
+                                tracking.setValue(url);
+                                trackingList.add(tracking);
+                            }
+                        }
+                        linearTracksAdded = true;
                     }
                 }
             }
@@ -94,9 +83,9 @@ final class Vast3 extends BaseVast<VAST> {
                 if (CollectionUtils.isNotEmpty(clickUrlsNonLinear)) {
                     List<NonLinearWrapperType> nonLinearTypes = creative.getNonLinearAds().getNonLinear();
                     if (CollectionUtils.isEmpty(nonLinearTypes) && createMissingElements) {
-                    	nonLinearTypes = new ArrayList<>(1);
-                    	nonLinearTypes.add(new NonLinearWrapperType());
-                    	creative.getNonLinearAds().setNonLinear(nonLinearTypes);                    	
+                        nonLinearTypes = new ArrayList<>(1);
+                        nonLinearTypes.add(new NonLinearWrapperType());
+                        creative.getNonLinearAds().setNonLinear(nonLinearTypes);
                     }
                     if (CollectionUtils.isNotEmpty(nonLinearTypes)) {
                         for (NonLinearWrapperType nonLinearWrapperType : nonLinearTypes) {
@@ -118,36 +107,36 @@ final class Vast3 extends BaseVast<VAST> {
                         creative.getNonLinearAds().setTrackingEvents(eventsType = new TrackingEventsType());
                     }
                     if (eventsType != null) {
-	                    List<TrackingEventsType.Tracking> trackingList = eventsType.getTracking();
-	                    for (Map.Entry<String, Set<String>> stringListEntry : trackingUrlsNonLinear.entrySet()) {
-	                        for (String url : stringListEntry.getValue()) {
-	                            if (StringUtils.isEmpty(url)) {
-	                                continue;
-	                            }
-	                            Tracking tracking = new Tracking();
-	                            tracking.setEvent(stringListEntry.getKey());
-	                            tracking.setValue(url);
-	                            trackingList.add(tracking);
-	                        }
-	                    }
-	                    nonLinearTracksAdded = true;	                    
+                        List<TrackingEventsType.Tracking> trackingList = eventsType.getTracking();
+                        for (Map.Entry<String, Set<String>> stringListEntry : trackingUrlsNonLinear.entrySet()) {
+                            for (String url : stringListEntry.getValue()) {
+                                if (StringUtils.isEmpty(url)) {
+                                    continue;
+                                }
+                                Tracking tracking = new Tracking();
+                                tracking.setEvent(stringListEntry.getKey());
+                                tracking.setValue(url);
+                                trackingList.add(tracking);
+                            }
+                        }
+                        nonLinearTracksAdded = true;
                     }
                 }
             }
-        }    	
+        }
         return new InjectTrackersResult(linearTracksAdded, linearClickUrlsAdded, nonLinearTracksAdded, nonLinearClickUrlsAdded);
     }
-    		
+
     private void doInjectTrackers(VAST vast, VastTrackers trackers) {
 
         List<String> errorUrls = trackers.getErrorUrls();
         String errorUrl = CollectionUtils.isNotEmpty(errorUrls) ? errorUrls.get(0) : null;
 
         List<String> imprUrls = trackers.getImpressionUrls();
-        
+
         Map<String, Set<String>> trackingUrls = trackers.getLinearTrackingUrls();
         Set<String> clickUrls = trackers.getLinearClickUrls();
-        
+
         Map<String, Set<String>> trackingUrlsNonLinear = trackers.getNonLinearTrackingUrls();
         Set<String> clickUrlsNonLinear = trackers.getNonLinearClickUrls();
 
@@ -180,28 +169,28 @@ final class Vast3 extends BaseVast<VAST> {
                 }
 
                 if (!trackingUrls.isEmpty() || !clickUrls.isEmpty() || !trackingUrlsNonLinear.isEmpty() || !clickUrlsNonLinear.isEmpty()) {
-                VAST.Ad.Wrapper.Creatives creatives = wrapper.getCreatives();
+                    VAST.Ad.Wrapper.Creatives creatives = wrapper.getCreatives();
                     if (creatives == null) {
-                    	creatives = new VAST.Ad.Wrapper.Creatives();
-                    	wrapper.setCreatives(creatives);
-                    	injectWrapperTrackers(true, creatives, clickUrls, trackingUrls, clickUrlsNonLinear, trackingUrlsNonLinear);
+                        creatives = new VAST.Ad.Wrapper.Creatives();
+                        wrapper.setCreatives(creatives);
+                        injectWrapperTrackers(true, creatives, clickUrls, trackingUrls, clickUrlsNonLinear, trackingUrlsNonLinear);
                     } else {
-                    	InjectTrackersResult result = injectWrapperTrackers(false, creatives, clickUrls, trackingUrls, clickUrlsNonLinear, trackingUrlsNonLinear);
-                    	if (result.linearClickUrlsAdded) {
-                    		clickUrls = Collections.emptySet();
-                    	}
-                    	if (result.linearTracksAdded) {
-                    		trackingUrls = Collections.emptyMap();
-                    	}
-                    	if (result.nonLinearClickUrlsAdded) {
-                    		clickUrlsNonLinear = Collections.emptySet();
-                    	}
-                    	if (result.nonLinearTracksAdded) {
-                    		trackingUrlsNonLinear = Collections.emptyMap();
-                    	}
-                    	if (!trackingUrls.isEmpty() || !clickUrls.isEmpty() || !trackingUrlsNonLinear.isEmpty()) {
-                    		injectWrapperTrackers(true, creatives, clickUrls, trackingUrls, clickUrlsNonLinear, trackingUrlsNonLinear);
-                    	}
+                        InjectTrackersResult result = injectWrapperTrackers(false, creatives, clickUrls, trackingUrls, clickUrlsNonLinear, trackingUrlsNonLinear);
+                        if (result.linearClickUrlsAdded) {
+                            clickUrls = Collections.emptySet();
+                        }
+                        if (result.linearTracksAdded) {
+                            trackingUrls = Collections.emptyMap();
+                        }
+                        if (result.nonLinearClickUrlsAdded) {
+                            clickUrlsNonLinear = Collections.emptySet();
+                        }
+                        if (result.nonLinearTracksAdded) {
+                            trackingUrlsNonLinear = Collections.emptyMap();
+                        }
+                        if (!trackingUrls.isEmpty() || !clickUrls.isEmpty() || !trackingUrlsNonLinear.isEmpty()) {
+                            injectWrapperTrackers(true, creatives, clickUrls, trackingUrls, clickUrlsNonLinear, trackingUrlsNonLinear);
+                        }
                     }
                 }
             }
@@ -323,138 +312,6 @@ final class Vast3 extends BaseVast<VAST> {
                             }
                         }
                     }
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void convertAllResourcesToHTML(VAST vast, BiFunction<String, String, String> htmlContentApplier) {
-        List<Ad> ads = vast.getAd();
-        if (CollectionUtils.isEmpty(ads)) {
-            return;
-        }
-        for (Ad ad : ads) {
-            Ad.Wrapper wrapper = ad.getWrapper();
-            if (wrapper != null) {
-
-                Ad.Wrapper.Creatives creatives = wrapper.getCreatives();
-                if (creatives == null) {
-                    continue;
-                }
-                List<Ad.Wrapper.Creatives.Creative> creative = creatives.getCreative();
-                if (CollectionUtils.isEmpty(creative)) {
-                    continue;
-                }
-                for (Ad.Wrapper.Creatives.Creative cr : creative) {
-                    Ad.Wrapper.Creatives.Creative.Linear linear = cr.getLinear();
-                    if (linear != null) {
-                        applyIconsHtmlConvert(linear.getIcons(), htmlContentApplier);
-                    }
-
-                    Ad.Wrapper.Creatives.Creative.CompanionAds companionAds = cr.getCompanionAds();
-                    if (companionAds != null) {
-                        List<CompanionWrapperType> companions = companionAds.getCompanion();
-                        if (CollectionUtils.isNotEmpty(companions)) {
-                            for (CompanionWrapperType c : companions) {
-                                convertAllToHTMLResource(c::getHTMLResource, c::getIFrameResource, c::getStaticResource,
-                                        c::setHTMLResource, c::setIFrameResource, c::setStaticResource,
-                                        c.getHeight(), c.getWidth(), htmlContentApplier, "companion");
-                            }
-                        }
-                    }
-                }
-            }
-
-            Ad.InLine inLine = ad.getInLine();
-            if (inLine != null) {
-                Ad.InLine.Creatives creatives = inLine.getCreatives();
-                if (creatives == null) {
-                    continue;
-                }
-                List<Ad.InLine.Creatives.Creative> creative = creatives.getCreative();
-                if (CollectionUtils.isEmpty(creative)) {
-                    continue;
-                }
-                for (Ad.InLine.Creatives.Creative cr : creative) {
-
-                    Ad.InLine.Creatives.Creative.Linear linear = cr.getLinear();
-                    if (linear != null) {
-                        applyIconsHtmlConvert(linear.getIcons(), htmlContentApplier);
-                    }
-
-                    Ad.InLine.Creatives.Creative.CompanionAds companionAds = cr.getCompanionAds();
-                    if (companionAds != null) {
-                        List<CompanionType> companions = companionAds.getCompanion();
-                        if (CollectionUtils.isNotEmpty(companions)) {
-                            for (CompanionType c : companions) {
-                                convertAllToHTMLResource(c::getHTMLResource, c::getIFrameResource, c::getStaticResource,
-                                        c::setHTMLResource, c::setIFrameResource, c::setStaticResource,
-                                        c.getHeight(), c.getWidth(), htmlContentApplier, "companion");
-                            }
-                        }
-                    }
-
-                    Ad.InLine.Creatives.Creative.NonLinearAds nonLinearAds = cr.getNonLinearAds();
-                    if (nonLinearAds != null) {
-                        List<NonLinearType> nonLinear = nonLinearAds.getNonLinear();
-                        if (CollectionUtils.isNotEmpty(nonLinear)) {
-                            for (NonLinearType nl : nonLinear) {
-                                convertAllToHTMLResource(nl::getHTMLResource, nl::getIFrameResource, nl::getStaticResource,
-                                        nl::setHTMLResource, nl::setIFrameResource, nl::setStaticResource,
-                                        nl.getHeight(), nl.getWidth(), htmlContentApplier, "nonlinear");
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void convertAllToHTMLResource(Supplier<HTMLResourceType> htmlGetter, Supplier<String> iFrameGetter, Supplier<StaticResource> staticGetter,
-                                          Consumer<HTMLResourceType> htmlSetter, Consumer<String> iframeSetter, Consumer<StaticResource> staticSetter,
-                                          Number height, Number width, BiFunction<String, String, String> htmlContentApplier, String placeName) {
-
-        HTMLResourceType htmlResource = htmlGetter.get();
-        String iFrameResource = iFrameGetter.get();
-        StaticResource staticResource = staticGetter.get();
-
-        if (htmlResource != null) {
-            if (htmlResource.getValue() == null) {
-                htmlSetter.accept(null);
-            } else {
-                String value = BooleanUtils.isTrue(htmlResource.isXmlEncoded()) ? StringEscapeUtils.unescapeXml(htmlResource.getValue()) : htmlResource.getValue();
-                htmlResource.setValue(htmlContentApplier.apply(value, placeName + "-html"));
-                htmlResource.setXmlEncoded(false);
-                htmlSetter.accept(htmlResource);
-            }
-        }
-        if (iFrameResource != null) {
-            iframeSetter.accept(null);
-            if (htmlGetter.get() == null) {
-                htmlResource = new HTMLResourceType();
-                htmlResource.setValue(htmlContentApplier.apply(createIframe(iFrameResource, height, width), placeName + "-iframe"));
-                htmlSetter.accept(htmlResource);
-            }
-        }
-        if (staticResource != null && staticResource.getCreativeType().contains("image")) {
-            staticSetter.accept(null);
-            if (htmlGetter.get() == null) {
-                htmlResource = new HTMLResourceType();
-                htmlResource.setValue(htmlContentApplier.apply(createImg(staticResource.getValue(), height, width), placeName + "-image"));
-                htmlSetter.accept(htmlResource);
-            }
-        }
-    }
-
-    protected void applyIconsHtmlConvert(Icons icons, BiFunction<String, String, String> htmlContentApplier) {
-        if (icons != null) {
-            List<IconType> icon = icons.getIcon();
-            if (CollectionUtils.isNotEmpty(icon)) {
-                for (IconType ic : icon) {
-                    convertAllToHTMLResource(ic::getHTMLResource, ic::getIFrameResource, ic::getStaticResource,
-                            ic::setHTMLResource, ic::setIFrameResource, ic::setStaticResource,
-                            ic.getHeight(), ic.getWidth(), htmlContentApplier, "icon");
                 }
             }
         }
