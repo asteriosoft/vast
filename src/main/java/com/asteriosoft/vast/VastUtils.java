@@ -7,8 +7,6 @@ import com.asteriosoft.vast.v4.AnyURIType;
 import com.asteriosoft.vast.v4.TrackingEventsLinearType;
 import com.asteriosoft.vast.v4.TrackingEventsNonLinearType;
 import com.asteriosoft.vast.v41.VideoClicksBaseType;
-import com.asteriosoft.vast.v42.ImpressionType;
-import com.asteriosoft.vast.v42.NonLinearAdBaseType;
 import com.asteriosoft.vast.v42.VideoClicksType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -250,13 +248,12 @@ public final class VastUtils {
             if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
                 for (VAST.Ad.Wrapper.Creatives.Creative cr : wrapper.getCreatives().getCreative()) {
                     if (cr.getLinear() != null) {
-                        if (cr.getLinear().getTrackingEvents() != null && cr.getLinear().getTrackingEvents() != null) {
-                            List<TrackingEventsType.Tracking> trackings = cr.getLinear().getTrackingEvents().getTracking();
+                        TrackingEventsType trackingEvents = cr.getLinear().getTrackingEvents();
+                        if (trackingEvents != null) {
+                            List<TrackingEventsType.Tracking> trackings = trackingEvents.getTracking();
                             if (CollectionUtils.isNotEmpty(trackings)) {
                                 for (TrackingEventsType.Tracking tracking : trackings) {
-                                    linearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> {
-                                        return new LinkedHashSet<String>(1);
-                                    }).add(tracking.getValue());
+                                    linearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> new LinkedHashSet<>(1)).add(tracking.getValue());
                                 }
                             }
                         }
@@ -273,9 +270,7 @@ public final class VastUtils {
                         List<TrackingEventsType.Tracking> trackings = cr.getNonLinearAds().getTrackingEvents().getTracking();
                         if (CollectionUtils.isNotEmpty(trackings)) {
                             for (TrackingEventsType.Tracking tracking : trackings) {
-                                nonLinearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> {
-                                    return new LinkedHashSet<String>(1);
-                                }).add(tracking.getValue());
+                                nonLinearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> new LinkedHashSet<>(1)).add(tracking.getValue());
                             }
                         }
                     }
@@ -303,13 +298,12 @@ public final class VastUtils {
             if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
                 for (com.asteriosoft.vast.v3.VAST.Ad.Wrapper.Creatives.Creative cr : wrapper.getCreatives().getCreative()) {
                     if (cr.getLinear() != null) {
-                        if (cr.getLinear().getTrackingEvents() != null && cr.getLinear().getTrackingEvents() != null) {
-                            List<com.asteriosoft.vast.v3.TrackingEventsType.Tracking> trackings = cr.getLinear().getTrackingEvents().getTracking();
+                        com.asteriosoft.vast.v3.TrackingEventsType trackingEvents = cr.getLinear().getTrackingEvents();
+                        if (trackingEvents != null) {
+                            List<com.asteriosoft.vast.v3.TrackingEventsType.Tracking> trackings = trackingEvents.getTracking();
                             if (CollectionUtils.isNotEmpty(trackings)) {
                                 for (com.asteriosoft.vast.v3.TrackingEventsType.Tracking tracking : trackings) {
-                                    linearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> {
-                                        return new LinkedHashSet<String>(1);
-                                    }).add(tracking.getValue());
+                                    linearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> new LinkedHashSet<>(1)).add(tracking.getValue());
                                 }
                             }
                         }
@@ -327,9 +321,7 @@ public final class VastUtils {
                             List<com.asteriosoft.vast.v3.TrackingEventsType.Tracking> trackings = cr.getNonLinearAds().getTrackingEvents().getTracking();
                             if (CollectionUtils.isNotEmpty(trackings)) {
                                 for (com.asteriosoft.vast.v3.TrackingEventsType.Tracking tracking : trackings) {
-                                    nonLinearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> {
-                                        return new LinkedHashSet<String>(1);
-                                    }).add(tracking.getValue());
+                                    nonLinearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> new LinkedHashSet<>(1)).add(tracking.getValue());
                                 }
                             }
                         }
@@ -376,13 +368,12 @@ public final class VastUtils {
             if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
                 for (com.asteriosoft.vast.v4.VAST.Ad.Wrapper.Creatives.Creative cr : wrapper.getCreatives().getCreative()) {
                     if (cr.getLinear() != null) {
-                        if (cr.getLinear().getTrackingEvents() != null && cr.getLinear().getTrackingEvents() != null) {
-                            List<TrackingEventsLinearType.Tracking> trackings = cr.getLinear().getTrackingEvents().getTracking();
+                        TrackingEventsLinearType trackingEvents = cr.getLinear().getTrackingEvents();
+                        if (trackingEvents != null) {
+                            List<TrackingEventsLinearType.Tracking> trackings = trackingEvents.getTracking();
                             if (CollectionUtils.isNotEmpty(trackings)) {
                                 for (TrackingEventsLinearType.Tracking tracking : trackings) {
-                                    linearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> {
-                                        return new LinkedHashSet<String>(1);
-                                    }).add(tracking.getValue());
+                                    linearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> new LinkedHashSet<>(1)).add(tracking.getValue());
                                 }
                             }
                         }
@@ -400,9 +391,7 @@ public final class VastUtils {
                             List<TrackingEventsNonLinearType.Tracking> trackings = cr.getNonLinearAds().getTrackingEvents().getTracking();
                             if (CollectionUtils.isNotEmpty(trackings)) {
                                 for (TrackingEventsNonLinearType.Tracking tracking : trackings) {
-                                    nonLinearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> {
-                                        return new LinkedHashSet<String>(1);
-                                    }).add(tracking.getValue());
+                                    nonLinearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> new LinkedHashSet<>(1)).add(tracking.getValue());
                                 }
                             }
                         }
@@ -516,8 +505,9 @@ public final class VastUtils {
             if (wrapper.getCreatives() != null && CollectionUtils.isNotEmpty(wrapper.getCreatives().getCreative())) {
                 for (com.asteriosoft.vast.v42.CreativeWrapperType cr : wrapper.getCreatives().getCreative()) {
                     if (cr.getLinear() != null) {
-                        if (cr.getLinear().getTrackingEvents() != null && cr.getLinear().getTrackingEvents() != null) {
-                            List<com.asteriosoft.vast.v42.TrackingEventsType.Tracking> trackings = cr.getLinear().getTrackingEvents().getTracking();
+                        com.asteriosoft.vast.v42.TrackingEventsType trackingEvents = cr.getLinear().getTrackingEvents();
+                        if (trackingEvents != null) {
+                            List<com.asteriosoft.vast.v42.TrackingEventsType.Tracking> trackings = trackingEvents.getTracking();
                             if (CollectionUtils.isNotEmpty(trackings)) {
                                 for (com.asteriosoft.vast.v42.TrackingEventsType.Tracking tracking : trackings) {
                                     linearTrackingUrls.computeIfAbsent(tracking.getEvent(), t -> new LinkedHashSet<>(1)).add(tracking.getValue());

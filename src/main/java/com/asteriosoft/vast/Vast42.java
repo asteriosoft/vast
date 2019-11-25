@@ -44,15 +44,13 @@ final class Vast42 extends BaseVast<VAST> {
                         videoClicks = new VideoClicksType();
                         creative.getLinear().setVideoClicks(videoClicks);
                     }
-                    if (videoClicks != null) {
-                        for (String clickUrl : clickUrls) {
-                            List<VideoClicksType.ClickTracking> trackingsList = videoClicks.getClickTracking();
-                            VideoClicksType.ClickTracking tracking = new VideoClicksType.ClickTracking();
-                            tracking.setValue(clickUrl);
-                            trackingsList.add(tracking);
-                        }
-                        linearClickUrlsAdded = true;
+                    for (String clickUrl : clickUrls) {
+                        List<VideoClicksType.ClickTracking> trackingsList = videoClicks.getClickTracking();
+                        VideoClicksType.ClickTracking tracking = new VideoClicksType.ClickTracking();
+                        tracking.setValue(clickUrl);
+                        trackingsList.add(tracking);
                     }
+                    linearClickUrlsAdded = true;
                 }
 
                 // EVENTS
