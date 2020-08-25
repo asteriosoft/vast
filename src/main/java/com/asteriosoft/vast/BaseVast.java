@@ -38,18 +38,22 @@ abstract class BaseVast<V> {
             char c = xml.charAt(pos);
             sb.append(c);
 
-            if (c == '!') {
-                if ((pos + 1 < max) && xml.charAt(pos + 1) == '[') {
-                    if ((pos + 2 < max) && xml.charAt(pos + 2) == 'C') {
-                        inCDATA = true;
-                        continue;
+            if (c == '<') {
+                if ((pos + 1 < max) && xml.charAt(pos + 1) == '!') {
+                    if ((pos + 2 < max) && xml.charAt(pos + 2) == '[') {
+                        if ((pos + 3 < max) && xml.charAt(pos + 3) == 'C') {
+                            inCDATA = true;
+                            continue;
+                        }
                     }
                 }
             }
             if (inCDATA && c == ']') {
                 if ((pos + 1 < max) && xml.charAt(pos + 1) == ']') {
-                    inCDATA = false;
-                    continue;
+                    if ((pos + 2 < max) && xml.charAt(pos + 2) == '>') {
+                        inCDATA = false;
+                        continue;
+                    }
                 }
             }
 
