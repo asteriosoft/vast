@@ -18,13 +18,27 @@
 
 package com.asteriosoft.vast;
 
-import com.asteriosoft.vast.v4.*;
+import com.asteriosoft.vast.v4.AnyURIType;
+import com.asteriosoft.vast.v4.NonLinearType;
+import com.asteriosoft.vast.v4.NonLinearWrapperType;
+import com.asteriosoft.vast.v4.ObjectFactory;
+import com.asteriosoft.vast.v4.TrackingEventsLinearType;
+import com.asteriosoft.vast.v4.TrackingEventsNonLinearType;
+import com.asteriosoft.vast.v4.VAST;
 import com.asteriosoft.vast.v4.VAST.Ad;
+import com.asteriosoft.vast.v4.VideoClicksType;
+import com.asteriosoft.vast.v4.VideoClicksWrapperType;
+import com.asteriosoft.vast.v4.ViewableImpressionType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 final class Vast4 extends BaseVast<VAST> {
 

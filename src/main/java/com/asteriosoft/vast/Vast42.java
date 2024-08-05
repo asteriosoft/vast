@@ -18,13 +18,28 @@
 
 package com.asteriosoft.vast;
 
-import com.asteriosoft.vast.v42.*;
+import com.asteriosoft.vast.v42.CreativeInlineType;
+import com.asteriosoft.vast.v42.CreativeWrapperType;
+import com.asteriosoft.vast.v42.ImpressionType;
+import com.asteriosoft.vast.v42.InlineType;
+import com.asteriosoft.vast.v42.NonLinearAdInlineType;
+import com.asteriosoft.vast.v42.ObjectFactory;
+import com.asteriosoft.vast.v42.TrackingEventsType;
+import com.asteriosoft.vast.v42.VAST;
 import com.asteriosoft.vast.v42.VAST.Ad;
+import com.asteriosoft.vast.v42.VideoClicksType;
+import com.asteriosoft.vast.v42.ViewableImpressionType;
+import com.asteriosoft.vast.v42.WrapperType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 final class Vast42 extends BaseVast<VAST> {
 
