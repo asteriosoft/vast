@@ -183,4 +183,15 @@ public class ViewableImpressionType {
         this.id = value;
     }
 
+    public void setViewable(List<String> viewable) {
+        this.viewable = viewable;
+    }
+
+    public void setNotViewable(List<String> notViewable) {
+        this.notViewable = notViewable;
+    }
+
+    public void setViewUndetermined(List<String> viewUndetermined) {
+        this.viewUndetermined = viewUndetermined;
+    }
 }

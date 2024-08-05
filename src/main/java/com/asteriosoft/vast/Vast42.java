@@ -18,27 +18,13 @@
 
 package com.asteriosoft.vast;
 
-import com.asteriosoft.vast.v42.CreativeInlineType;
-import com.asteriosoft.vast.v42.CreativeWrapperType;
-import com.asteriosoft.vast.v42.ImpressionType;
-import com.asteriosoft.vast.v42.InlineType;
-import com.asteriosoft.vast.v42.NonLinearAdInlineType;
-import com.asteriosoft.vast.v42.ObjectFactory;
-import com.asteriosoft.vast.v42.TrackingEventsType;
-import com.asteriosoft.vast.v42.VAST;
+import com.asteriosoft.vast.v42.*;
 import com.asteriosoft.vast.v42.VAST.Ad;
-import com.asteriosoft.vast.v42.VideoClicksType;
-import com.asteriosoft.vast.v42.WrapperType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 final class Vast42 extends BaseVast<VAST> {
 
@@ -151,6 +137,10 @@ final class Vast42 extends BaseVast<VAST> {
         List<String> errorUrls = trackers.getErrorUrls();
         List<String> imprUrls = trackers.getImpressionUrls();
 
+        List<String> viewImpressionUrls = trackers.getViewImprUrls();
+        List<String> unviewImpressionUrls = trackers.getUnviewImprUrls();
+        List<String> viewUndeterminedUrls = trackers.getViewUndeterminedUrls();
+
         Map<String, Set<String>> trackingUrls = trackers.getLinearTrackingUrls();
         Set<String> clickUrls = trackers.getLinearClickUrls();
 
@@ -186,6 +176,16 @@ final class Vast42 extends BaseVast<VAST> {
                         newList.add(impr);
                     }
                     wrapper.getImpression().addAll(newList);
+                }
+
+                // viewable impression
+                if (CollectionUtils.isNotEmpty(viewImpressionUrls)
+                        || CollectionUtils.isNotEmpty(unviewImpressionUrls)
+                        || CollectionUtils.isNotEmpty(viewUndeterminedUrls)) {
+                    ViewableImpressionType existedViewImpression = wrapper.getViewableImpression();
+                    ViewableImpressionType viewImpression = addInViewableImpression(
+                            existedViewImpression, viewImpressionUrls, unviewImpressionUrls, viewUndeterminedUrls);
+                    wrapper.setViewableImpression(viewImpression);
                 }
 
                 if (!trackingUrls.isEmpty() || !clickUrls.isEmpty() || !trackingUrlsNonLinear.isEmpty() || !clickUrlsNonLinear.isEmpty()) {
@@ -355,5 +355,31 @@ final class Vast42 extends BaseVast<VAST> {
     @Override
     protected VastVersion getVastVersion() {
         return VastVersion.VAST4;
+    }
+
+    private ViewableImpressionType addInViewableImpression(ViewableImpressionType existedViewImpression,
+                                                           List<String> viewImpressionUrls,
+                                                           List<String> unviewImpressionUrls,
+                                                           List<String> viewUndeterminedUrls) {
+        List<String> viewable = existedViewImpression != null && CollectionUtils.isNotEmpty(existedViewImpression.getViewable())
+                ? new ArrayList<>(existedViewImpression.getViewable())
+                : new ArrayList<>();
+        viewable.addAll(viewImpressionUrls);
+
+        List<String> notViewable = existedViewImpression != null && CollectionUtils.isNotEmpty(existedViewImpression.getNotViewable())
+                ? new ArrayList<>(existedViewImpression.getNotViewable())
+                : new ArrayList<>();
+        notViewable.addAll(unviewImpressionUrls);
+
+        List<String> viewUndetermined = existedViewImpression != null && CollectionUtils.isNotEmpty(existedViewImpression.getViewUndetermined())
+                ? new ArrayList<>(existedViewImpression.getViewUndetermined())
+                : new ArrayList<>();
+        viewUndetermined.addAll(viewUndeterminedUrls);
+
+        ViewableImpressionType viewImpression = new ViewableImpressionType();
+        viewImpression.setViewable(viewable);
+        viewImpression.setNotViewable(notViewable);
+        viewImpression.setViewUndetermined(viewUndetermined);
+        return viewImpression;
     }
 }
