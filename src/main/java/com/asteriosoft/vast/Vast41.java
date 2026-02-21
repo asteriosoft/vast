@@ -18,11 +18,11 @@
 
 package com.asteriosoft.vast;
 
-import com.asteriosoft.vast.v41.ViewableImpressionType;
 import com.asteriosoft.vast.v41.CreativeInlineType;
 import com.asteriosoft.vast.v41.CreativeWrapperType;
 import com.asteriosoft.vast.v41.ImpressionType;
 import com.asteriosoft.vast.v41.InlineType;
+import com.asteriosoft.vast.v41.LinearWrapperType;
 import com.asteriosoft.vast.v41.NonLinearAdInlineType;
 import com.asteriosoft.vast.v41.ObjectFactory;
 import com.asteriosoft.vast.v41.TrackingEventsType;
@@ -30,6 +30,7 @@ import com.asteriosoft.vast.v41.VAST;
 import com.asteriosoft.vast.v41.VAST.Ad;
 import com.asteriosoft.vast.v41.VideoClicksBaseType;
 import com.asteriosoft.vast.v41.VideoClicksInlineType;
+import com.asteriosoft.vast.v41.ViewableImpressionType;
 import com.asteriosoft.vast.v41.WrapperType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -208,6 +209,14 @@ final class Vast41 extends BaseVast<VAST> {
                     if (creatives == null) {
                         creatives = new WrapperType.Creatives();
                         wrapper.setCreatives(creatives);
+                    }
+                    if (CollectionUtils.isEmpty(creatives.getCreative())) {
+                        creatives.getCreative().add(new CreativeWrapperType());
+                    }
+                    CreativeWrapperType creative = creatives.getCreative().get(0);
+                    if (creative.getLinear() == null) {
+                        creative.setLinear(new LinearWrapperType());
+
                         injectWrapperTrackers(true, creatives, clickUrls, trackingUrls, clickUrlsNonLinear, trackingUrlsNonLinear);
                     } else {
                         InjectTrackersResult result = injectWrapperTrackers(false, creatives, clickUrls, trackingUrls, clickUrlsNonLinear, trackingUrlsNonLinear);
@@ -377,8 +386,10 @@ final class Vast41 extends BaseVast<VAST> {
 
     @Override
     protected VastVersion getVastVersion() {
-        return VastVersion.VAST4;
-    }private ViewableImpressionType addInViewableImpression(ViewableImpressionType existedViewImpression,
+        return VastVersion.VAST41;
+    }
+
+    private ViewableImpressionType addInViewableImpression(ViewableImpressionType existedViewImpression,
                                                             List<String> viewImpressionUrls,
                                                             List<String> unviewImpressionUrls,
                                                             List<String> viewUndeterminedUrls) {

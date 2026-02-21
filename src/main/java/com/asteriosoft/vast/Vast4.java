@@ -214,6 +214,14 @@ final class Vast4 extends BaseVast<VAST> {
                     if (creatives == null) {
                         creatives = new VAST.Ad.Wrapper.Creatives();
                         wrapper.setCreatives(creatives);
+                    }
+                    if (CollectionUtils.isEmpty(creatives.getCreative())) {
+                        creatives.setCreative(Collections.singletonList(new VAST.Ad.Wrapper.Creatives.Creative()));
+                    }
+                    VAST.Ad.Wrapper.Creatives.Creative creative = creatives.getCreative().get(0);
+                    if (creative.getLinear() == null) {
+                        creative.setLinear(new VAST.Ad.Wrapper.Creatives.Creative.Linear());
+
                         injectWrapperTrackers(true, creatives, clickUrls, trackingUrls, clickUrlsNonLinear, trackingUrlsNonLinear);
                     } else {
                         InjectTrackersResult result = injectWrapperTrackers(false, creatives, clickUrls, trackingUrls, clickUrlsNonLinear, trackingUrlsNonLinear);

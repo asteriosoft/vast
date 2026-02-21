@@ -4,11 +4,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class VastUnwrapUtilsTest {
@@ -102,94 +101,75 @@ public class VastUnwrapUtilsTest {
             "</VAST>";
 
     @Test
-    public void testVast2() throws VastUnwrapException {
-        com.asteriosoft.vast.v2.VAST vast2WithCompanions = (com.asteriosoft.vast.v2.VAST) VastUnwrapUtils.parseVast(VAST2_WRAPPER_WITH_COMPANIONS);
+    public void testVast2() throws Exception {
+        com.asteriosoft.vast.v2.VAST vast2WithCompanions = (com.asteriosoft.vast.v2.VAST) VastUtils.parseVast(VAST2_WRAPPER_WITH_COMPANIONS);
         assertNotNull(vast2WithCompanions);
         assertNotNull(vast2WithCompanions.getAd());
         assertEquals(1, vast2WithCompanions.getAd().size());
 
-        assertEquals(VastUnwrapUtils.getWrapperInfo(vast2WithCompanions), VastWrapperInfo.CREATIVES);
-
-        com.asteriosoft.vast.v2.VAST vast2WithoutCompanions = (com.asteriosoft.vast.v2.VAST) VastUnwrapUtils.parseVast(VAST2_WRAPPER_WITHOUT_COMPANIONS);
+        com.asteriosoft.vast.v2.VAST vast2WithoutCompanions = (com.asteriosoft.vast.v2.VAST) VastUtils.parseVast(VAST2_WRAPPER_WITHOUT_COMPANIONS);
         assertNotNull(vast2WithoutCompanions);
         assertNotNull(vast2WithoutCompanions.getAd());
         assertEquals(1, vast2WithoutCompanions.getAd().size());
 
-        VastWrapperInfo wrapperInfo = VastUnwrapUtils.getWrapperInfo(vast2WithoutCompanions);
-        assertNull(wrapperInfo.getNonUnwrapableReason());
-        assertEquals("http://demo.tremormedia.com/proddev/vast/vast_inline_nonlinear3.xml", wrapperInfo.getVastTagURI());
-
-        Map<String, Object> trackers = wrapperInfo.getTrackers();
-        assertEquals(1, trackers.size());
-        List<String> impressions = (List<String>) trackers.get(VASTTag.UrlImpressions.getTagName());
+        VastTrackers trackers = VastUtils.getWrapperTrackers(vast2WithoutCompanions);
+        List<String> impressions = trackers.getImpressionUrls();
         assertTrue(CollectionUtils.isNotEmpty(impressions) && impressions.size() == 1);
         assertEquals("http://myTrackingURL/wrapper/impression", impressions.get(0));
     }
 
     @Test
-    public void testVast3() throws VastUnwrapException {
-        com.asteriosoft.vast.v3.VAST vast3WithCompanions = (com.asteriosoft.vast.v3.VAST) VastUnwrapUtils.parseVast(VAST3_WRAPPER_WITH_COMPANIONS);
+    public void testVast3() throws Exception {
+        com.asteriosoft.vast.v3.VAST vast3WithCompanions = (com.asteriosoft.vast.v3.VAST) VastUtils.parseVast(VAST3_WRAPPER_WITH_COMPANIONS);
         assertNotNull(vast3WithCompanions);
         assertNotNull(vast3WithCompanions.getAd());
         assertEquals(1, vast3WithCompanions.getAd().size());
 
-        assertEquals(VastUnwrapUtils.getWrapperInfo(vast3WithCompanions), VastWrapperInfo.CREATIVES);
-
-        com.asteriosoft.vast.v3.VAST vast3WithoutCompanions = (com.asteriosoft.vast.v3.VAST) VastUnwrapUtils.parseVast(VAST3_WRAPPER_WITHOUT_COMPANIONS);
+        com.asteriosoft.vast.v3.VAST vast3WithoutCompanions = (com.asteriosoft.vast.v3.VAST) VastUtils.parseVast(VAST3_WRAPPER_WITHOUT_COMPANIONS);
         assertNotNull(vast3WithoutCompanions);
         assertNotNull(vast3WithoutCompanions.getAd());
         assertEquals(1, vast3WithoutCompanions.getAd().size());
 
-        VastWrapperInfo wrapperInfo = VastUnwrapUtils.getWrapperInfo(vast3WithoutCompanions);
-        assertNull(wrapperInfo.getNonUnwrapableReason());
-        assertEquals("https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%203.0%20Samples/Inline_Companion_Tag-test.xml", wrapperInfo.getVastTagURI());
-
-        Map<String, Object> trackers = wrapperInfo.getTrackers();
-        assertEquals(2, trackers.size());
-        List<String> impressions = (List<String>) trackers.get(VASTTag.UrlImpressions.getTagName());
+        VastTrackers trackers = VastUtils.getWrapperTrackers(vast3WithoutCompanions);
+        List<String> impressions = trackers.getImpressionUrls();
         assertTrue(CollectionUtils.isNotEmpty(impressions) && impressions.size() == 1);
         assertEquals("http://example.com/track/impression", impressions.get(0));
 
-        List<String> errors = (List<String>) trackers.get(VASTTag.UrlErrors.getTagName());
+        List<String> errors = trackers.getErrorUrls();
         assertTrue(CollectionUtils.isNotEmpty(errors) && errors.size() == 1);
         assertEquals("http://example.com/error", errors.get(0));
     }
 
     @Test
-    public void testVast4() throws VastUnwrapException {
-        com.asteriosoft.vast.v4.VAST vast4WithCompanions = (com.asteriosoft.vast.v4.VAST) VastUnwrapUtils.parseVast(VAST4_WRAPPER_WITH_COMPANIONS);
+    public void testVast4() throws Exception {
+        com.asteriosoft.vast.v4.VAST vast4WithCompanions = (com.asteriosoft.vast.v4.VAST) VastUtils.parseVast(VAST4_WRAPPER_WITH_COMPANIONS);
         assertNotNull(vast4WithCompanions);
         assertNotNull(vast4WithCompanions.getAd());
         assertEquals(1, vast4WithCompanions.getAd().size());
 
-        assertEquals(VastUnwrapUtils.getWrapperInfo(vast4WithCompanions), VastWrapperInfo.CREATIVES);
-
-        com.asteriosoft.vast.v4.VAST vast4WithoutCompanions = (com.asteriosoft.vast.v4.VAST) VastUnwrapUtils.parseVast(VAST4_WRAPPER_WITHOUT_COMPANIONS);
+        com.asteriosoft.vast.v4.VAST vast4WithoutCompanions = (com.asteriosoft.vast.v4.VAST) VastUtils.parseVast(VAST4_WRAPPER_WITHOUT_COMPANIONS);
         assertNotNull(vast4WithoutCompanions);
         assertNotNull(vast4WithoutCompanions.getAd());
         assertEquals(1, vast4WithoutCompanions.getAd().size());
 
-        VastWrapperInfo wrapperInfo = VastUnwrapUtils.getWrapperInfo(vast4WithoutCompanions);
-        assertNull(wrapperInfo.getNonUnwrapableReason());
-        assertEquals("https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%204.0%20Samples/Inline_Companion_Tag-test.xml", wrapperInfo.getVastTagURI());
-
-        Map<String, Object> trackers = wrapperInfo.getTrackers();
-        assertEquals(2, trackers.size());
-        List<String> impressions = (List<String>) trackers.get(VASTTag.UrlImpressions.getTagName());
+        VastTrackers trackers = VastUtils.getWrapperTrackers(vast4WithoutCompanions);
+        List<String> impressions = trackers.getImpressionUrls();
         assertTrue(CollectionUtils.isNotEmpty(impressions) && impressions.size() == 1);
         assertEquals("http://example.com/track/impression", impressions.get(0));
 
-        List<String> errors = (List<String>) trackers.get(VASTTag.UrlErrors.getTagName());
+        List<String> errors = trackers.getErrorUrls();
         assertTrue(CollectionUtils.isNotEmpty(errors) && errors.size() == 1);
         assertEquals("http://example.com/error", errors.get(0));
     }
 
     @Test
-    public void emptyVast() throws VastUnwrapException {
+    public void emptyVast() throws Exception {
         String vast = "<VAST version=\"2.0\"></VAST>";
 
-        com.asteriosoft.vast.v2.VAST emtyVast = (com.asteriosoft.vast.v2.VAST) VastUnwrapUtils.parseVast(vast);
-        VastWrapperInfo wrapperInfo = VastUnwrapUtils.getWrapperInfo(emtyVast);
-        assertEquals(wrapperInfo.getNonUnwrapableReason(), NonUnwrupableReason.NoAds);
+        com.asteriosoft.vast.v2.VAST emtyVast = (com.asteriosoft.vast.v2.VAST) VastUtils.parseVast(vast);
+        assertTrue(emtyVast.getAd().size() == 0);
+
+        assertFalse(VastUtils.isVastWrapper(vast));
+        assertFalse(VastUtils.isVastAd(vast));
     }
 }
