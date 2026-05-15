@@ -148,7 +148,7 @@ final class Vast3 extends BaseVast<VAST> {
     private void doInjectTrackers(VAST vast, VastTrackers trackers) {
 
         List<String> errorUrls = trackers.getErrorUrls();
-        String errorUrl = CollectionUtils.isNotEmpty(errorUrls) ? errorUrls.get(0) : null;
+        String errorUrl = CollectionUtils.isNotEmpty(errorUrls) ? errorUrls.get(0).trim() : null;
 
         List<String> imprUrls = trackers.getImpressionUrls();
 
@@ -171,7 +171,7 @@ final class Vast3 extends BaseVast<VAST> {
                     if (StringUtils.isBlank(error) || VastOption.REPLACE_ERROR_URL) {
                         error = errorUrl;
                     } else {
-                        error = errorUrl + "&errorUrl=" + encodeUrl(error);
+                        error = errorUrl + "&errorUrl=" + encodeUrl(error.trim());
                     }
                     wrapper.setError(error);
                 }
@@ -230,7 +230,7 @@ final class Vast3 extends BaseVast<VAST> {
                     if (StringUtils.isBlank(error)) {
                         error = errorUrl;
                     } else {
-                        error = errorUrl + "&errorUrl=" + encodeUrl(error);
+                        error = errorUrl + "&errorUrl=" + encodeUrl(error.trim());
                     }
                     inLine.setError(error);
                 }
