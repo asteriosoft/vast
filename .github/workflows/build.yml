@@ -25,7 +25,7 @@ jobs:
           cache: maven
 
       - name: Build
-        run: mvn -B package
+        run: mvn -B package -Dbuild.version=0-SNAPSHOT
 
   deploy:
     needs: build
